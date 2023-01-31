@@ -16,3 +16,15 @@ I found this project idea interesting as I enjoy playing chess occasionally, so 
 A chess board application is very simple in nature, but it does meet all the guidelines for our term project. I believe
 that this would be a good project for someone who does not have much experience with Java, but still have enough 
 challenges to not feel too trivial.
+
+
+## User Stories
+1. As a user, I want to be able to reset the board to the starting state.
+   1. This must be possible only though offering a draw **and** resignation.
+2. As a user, I want to be able to see a representation of the board.
+3. As a user, I want to be able to move pieces around on the board.
+   1. Only as allowed by the rules of chess. 
+   2. This includes removing a piece from the board when moving to the position of an enemy piece.
+4. As a user, I want to be able to see previous moves, preferably both graphically and through chess notation. 
+*(This requires adding an X to a Y)*
+5. As a user, I want the game to automatically detect checkmate or stalemate positions.
