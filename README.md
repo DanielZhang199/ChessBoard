@@ -28,3 +28,7 @@ challenges to not feel too trivial.
 4. As a user, I want to be able to see previous moves, preferably both graphically and through chess notation. 
 *(This requires adding an X to a Y)*
 5. As a user, I want the game to automatically detect checkmate or stalemate positions.
+
+
+## Board Grid
+![8x8 grid from 0-63](grid.png "Putting this here for future reference")
