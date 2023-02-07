@@ -2,15 +2,14 @@ package model;
 
 import java.util.ArrayList;
 
-// Queen piece
-public class Queen extends Piece {
-    private final String name = "Q";
+public class Knight extends Piece {
+    private final String name = "N";
 
-    public Queen(String allegiance, int position) {
+    public Knight(String allegiance, int position) {
         super(allegiance, position);
     }
 
-    // EFFECTS: returns list of all squares queen can move to following rules of chess
+    // EFFECTS: returns list of all squares knight can move to following rules of chess
     @Override
     public ArrayList<Integer> getMoves(GameBoard board) {
         return null;

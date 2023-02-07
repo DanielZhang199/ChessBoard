@@ -2,7 +2,7 @@ package model;
 
 import java.util.ArrayList;
 
-// represents the current board displayed to the user
+// represents the current game state with all pieces and their locations
 public class GameBoard {
     private ArrayList<Piece> pieces;  // list of pieces on board, squares are listed 0 to 63
     private String turn; // the side that gets to move next turn
@@ -10,9 +10,12 @@ public class GameBoard {
 
     // MODIFIES: this
     // EFFECTS: creates a board with pieces on starting positions, with white to move, and no moves played yet.
-    public GameBoard() {
+    // if empty is set to true, no pieces will be put on the board when initialized
+    public GameBoard(boolean empty) {
         pieces = new ArrayList<Piece>();
-        setup();
+        if (!empty) {
+            setup();
+        }
         turn = "white";
         moves = new ArrayList<String>();
     }
@@ -33,6 +36,22 @@ public class GameBoard {
     // EFFECTS: turn goes the other player, and piece moves from start to end square; if there is an enemy piece on the
     // ending square, that piece is removed from the board.
     public void movePiece(int start, int end) {
+
+    }
+
+    // The next two methods will be used in special cases or for testing
+
+    // REQUIRES: piece is not on a square which is already occupied
+    // MODIFIES: this
+    // EFFECTS: adds a piece to the board
+    public void addPiece(Piece piece) {
+
+    }
+
+    // REQUIRES: there exists a piece on the board at the given position
+    // MODIFIES: this
+    // EFFECTS: removes a piece from the board
+    public void removePiece(int position) {
 
     }
 
