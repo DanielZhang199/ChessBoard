@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 public class King extends Piece {
     private final String name = "K";
@@ -10,12 +11,10 @@ public class King extends Piece {
     }
 
     // EFFECTS: returns list of all squares king can move to following rules of chess
-    @Override
-    public ArrayList<Integer> getMoves(GameBoard board) {
+    public Set<Integer> getMoves(GameBoard board) {
         return null;
     }
 
-    @Override
     public String getName() {
         return name;
     }

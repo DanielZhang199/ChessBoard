@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 // Bishop piece
 public class Bishop extends Piece {
@@ -13,12 +14,10 @@ public class Bishop extends Piece {
     }
 
     // EFFECTS: returns list of all squares bishop can move to following rules of chess
-    @Override
-    public ArrayList<Integer> getMoves(GameBoard board) {
+    public Set<Integer> getMoves(GameBoard board) {
         return null;
     }
 
-    @Override
     public String getName() {
         return name;
     }

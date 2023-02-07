@@ -1,9 +1,10 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 // Common supertype for all pieces
-public class Piece {
+public abstract class Piece {
     protected int position;
     protected String allegiance;  // "B" for black, "W" for white
 
@@ -28,12 +29,7 @@ public class Piece {
         return allegiance;
     }
 
-    // the following getter methods will depend on piece subtype calling, they do not do anything on piece class
-    public ArrayList<Integer> getMoves(GameBoard board) {
-        return null;
-    }
+    abstract String getName();
 
-    public String getName() {
-        return null;
-    }
+    abstract Set<Integer> getMoves(GameBoard b);
 }

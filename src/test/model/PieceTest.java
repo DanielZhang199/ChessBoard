@@ -5,11 +5,15 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PieceTest {
-    private final Piece testPiece = new Piece("B", 0);
+    private final Piece testPiece = new Rook("B", 0);
 
     @Test
-    public void testPosition() {
+    public void testConstructor() {
         assertEquals(0, testPiece.getPosition());
+        assertEquals("B", testPiece.getAllegiance());
+        Piece newTestPiece = new King("W", 12);
+        assertEquals("W", newTestPiece.getAllegiance());
+        assertEquals(12, newTestPiece.getPosition());
     }
 
     @Test
@@ -28,16 +32,4 @@ class PieceTest {
         assertEquals(10, testPiece.getPosition());
     }
 
-    @Test
-    public void testAllegiance() {
-        assertEquals("B", testPiece.getAllegiance());
-        Piece newTestPiece = new Piece("W", 12);
-        assertEquals("W", newTestPiece.getAllegiance());
-    }
-
-    @Test
-    public void testNullMethods() {
-        assertNull(testPiece.getName());
-        assertNull(testPiece.getMoves(new GameBoard(true)));
-    }
 }

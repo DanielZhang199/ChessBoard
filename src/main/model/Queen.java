@@ -1,23 +1,20 @@
 package model;
 
-import java.util.ArrayList;
+import java.util.Set;
 
 // Queen piece
 public class Queen extends Piece {
-    private final String name = "Q";
 
     public Queen(String allegiance, int position) {
         super(allegiance, position);
     }
 
-    // EFFECTS: returns list of all squares queen can move to following rules of chess
-    @Override
-    public ArrayList<Integer> getMoves(GameBoard board) {
+    // EFFECTS: returns set of all squares queen can move to following rules of chess
+    public Set<Integer> getMoves(GameBoard board) {
         return null;
     }
 
-    @Override
     public String getName() {
-        return name;
+        return "Q";
     }
 }

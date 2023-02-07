@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 public class Pawn extends Piece {
     private final String name = "P"; // pawns don't have a character for notation, so this is just for consistency
@@ -10,12 +11,10 @@ public class Pawn extends Piece {
     }
 
     // EFFECTS: returns list of all squares pawn can move to following rules of chess
-    @Override
-    public ArrayList<Integer> getMoves(GameBoard board) {
+    public Set<Integer> getMoves(GameBoard board) {
         return null;
     }
 
-    @Override
     public String getName() {
         return name;
     }
