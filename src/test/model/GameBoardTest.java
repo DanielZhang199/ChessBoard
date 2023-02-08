@@ -3,8 +3,6 @@ package model;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 
-import java.util.ArrayList;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GameBoardTest {
@@ -21,9 +19,13 @@ public class GameBoardTest {
     public void testConstructorState() {
         assertEquals("W", newBoard.getTurn());
         assertNull(newBoard.getStatus());
+
+        // empty board is set up correctly
         assertEquals("K", emptyBoard.getPiece(60).getName());
         assertEquals("K", emptyBoard.getPiece(4).getName());
         assertEquals(2, emptyBoard.getNumPieces());
+
+        // new board is set up
         assertEquals(32, newBoard.getNumPieces());
 
         for (int i = 0; i <= 15; i++) {
@@ -39,6 +41,7 @@ public class GameBoardTest {
     }
     @Test
     public void testConstructorPieces() {
+        // test new board has all pieces in correct positions
         for (int i = 8; i <= 15; i++) {
             assertEquals("P", newBoard.getPiece(i).getName());
             assertEquals("P", newBoard.getPiece(i + 40).getName());
@@ -114,15 +117,149 @@ public class GameBoardTest {
     }
 
     @Test
-    public void testAddRook() {
+    public void testAddPieces() {
         emptyBoard.addPiece(new Rook("W", 56));
         assertTrue(emptyBoard.existsPiece(56));
-        assertEquals("R", newBoard.getPiece(56).getName());
-        assertEquals("W", newBoard.getPiece(56).getAllegiance());
-
-        emptyBoard.addPiece(new Rook("B", 0));
+        assertEquals("R", emptyBoard.getPiece(56).getName());
+        assertEquals("W", emptyBoard.getPiece(56).getAllegiance());
+        assertEquals(3, emptyBoard.getNumPieces());
+        emptyBoard.addPiece(new Bishop("B", 0));
         assertTrue(emptyBoard.existsPiece(0));
-        assertEquals("R", newBoard.getPiece(0).getName());
-        assertEquals("B", newBoard.getPiece(0).getAllegiance());
+        assertEquals("B", emptyBoard.getPiece(0).getName());
+        assertEquals("B", emptyBoard.getPiece(0).getAllegiance());
+        assertEquals(4, emptyBoard.getNumPieces());
+    }
+
+    @Test
+    public void testAddMany() {
+        for (int i = 48; i <= 55; i++) {
+            emptyBoard.addPiece(new Pawn("W", i));
+        }
+        for (int i = 48; i <= 55; i++) {
+            assertTrue(emptyBoard.existsPiece(i));
+        }
+        assertEquals(10, emptyBoard.getNumPieces());
+    }
+
+    @Test
+    public void testRemoveOne() {
+        newBoard.removePiece(0);
+        assertFalse(newBoard.existsPiece(0));
+        assertEquals(31, newBoard.getNumPieces());
+    }
+
+    @Test
+    public void testRemoveMany() {
+        for (int i = 8; i <= 15; i++) {
+            newBoard.removePiece(i);
+        }
+        assertEquals(24, newBoard.getNumPieces());
+
+        for (int i = 8; i <= 15; i++) {
+            assertFalse(newBoard.existsPiece(i));
+        }
+        assertEquals(16, newBoard.getNumPieces());
+    }
+
+    @Test
+    public void testSimpleCheckWhite() {
+        emptyBoard.addPiece(new Rook("B", 12));
+        assertTrue(emptyBoard.testCheck(60, 52));  // this move keeps king in check
+        assertFalse(emptyBoard.testCheck(60, 59));  // this move gets king out of check
+    }
+
+    @Test
+    public void testSimpleCheckBlack() {
+        emptyBoard.movePiece(4, 12);
+        emptyBoard.addPiece(new Rook("W", 52));
+        assertTrue(emptyBoard.testCheck(12, 20));  // this move keeps king in check
+        assertFalse(emptyBoard.testCheck(12, 3));  // this move gets king out of check
+    }
+
+    // while you cannot move into a check by the rules of chess, pieces need to be able to tell if a move would lead to
+    // check, in order to disallow that move from being made
+    @Test
+    public void testMoveIntoCheck() {
+        emptyBoard.addPiece(new Rook("B", 12));
+        emptyBoard.addPiece(new Rook("W", 52));
+        assertTrue(emptyBoard.testCheck(52, 51));
+        assertFalse(emptyBoard.testCheck(52, 12));
+        assertFalse(emptyBoard.testCheck(52, 20));
+    }
+
+    @Test
+    public void testCheckmate() {
+        newBoard.movePiece(52, 36);
+        newBoard.movePiece(13, 21);
+        newBoard.movePiece(51, 35);
+        newBoard.movePiece(14, 30);
+        assertFalse(newBoard.checkStatus());
+        assertNull(newBoard.getStatus());
+        newBoard.movePiece(59, 31);
+        // 1. e4 f6 2. d4 g5 3. Qh5#
+        assertTrue(newBoard.checkStatus());
+        assertEquals("White Wins By Checkmate", newBoard.getStatus());
+    }
+
+    @Test
+    public void testStalemate() {
+        emptyBoard.addPiece(new Queen("W", 19));
+        emptyBoard.addPiece(new Queen("W", 63));
+        assertFalse(emptyBoard.checkStatus());
+        emptyBoard.movePiece(63, 61);
+        assertTrue(emptyBoard.checkStatus());
+        assertEquals("Stalemate", emptyBoard.getStatus());
+    }
+
+    @Test
+    public void testStalemateBlack() {
+        emptyBoard.addPiece(new Queen("B", 44));
+        emptyBoard.addPiece(new Queen("B", 7));
+        assertFalse(emptyBoard.checkStatus());  // white is in check, but game is not over
+        emptyBoard.movePiece(60, 61);
+        assertFalse(emptyBoard.checkStatus());
+        emptyBoard.movePiece(7, 6);
+        assertTrue(emptyBoard.checkStatus());
+        assertEquals("Stalemate", emptyBoard.getStatus());
+    }
+
+    // there are different ways to decide when game is over by insufficient material, in this case the rule is that:
+    // if both sides have EITHER <=2 knights OR <=1 bishop
+    @Test
+    public void testInsufficientMaterialKings() {
+        assertTrue(emptyBoard.checkStatus());
+        assertEquals("Draw by Insufficient Material", emptyBoard.getStatus());
+    }
+
+    @Test
+    public void testInsufficientMaterialKnightBishop() {
+        emptyBoard.addPiece(new Knight("B", 0));
+        emptyBoard.addPiece(new Knight("B", 1));
+        emptyBoard.addPiece(new Bishop("W", 56));
+        assertTrue(emptyBoard.checkStatus());
+        assertEquals("Draw by Insufficient Material", emptyBoard.getStatus());
+    }
+
+    @Test
+    public void testKnightBishopGameContinues() {
+        emptyBoard.addPiece(new Knight("W", 1));
+        emptyBoard.addPiece(new Bishop("W", 56));
+        assertFalse(emptyBoard.checkStatus());
+    }
+
+    @Test
+    public void testBishopBishopGameContinues() {
+        emptyBoard.addPiece(new Bishop("B", 1));
+        emptyBoard.addPiece(new Bishop("B", 56));
+        assertFalse(emptyBoard.checkStatus());
+    }
+
+    // although it is unlikely to have 3 knights in a game
+    @Test
+    public void test3KnightGameContinues() {
+        emptyBoard.addPiece(new Knight("B", 1));
+        emptyBoard.addPiece(new Knight("B", 2));
+        emptyBoard.addPiece(new Knight("B", 3));
+        assertFalse(emptyBoard.checkStatus());
     }
 }
