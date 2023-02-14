@@ -19,10 +19,10 @@ public class QueenTest {
         testQueenW = new Queen("W", 59);
         testQueenB = new Queen("B", 3);
         board = new GameBoard(true);
-        // board has white king on e1, queen on d1, and black king on e8
+        // board has white king on e1, queens on d1 and d8 when needed, and black king on e8
     }
 
-    // No constructor test, as there is no constructor
+    // No constructor test, as there is no unique constructor
 
     @Test
     public void testName() {  // as getter methods will not be checked implicitly in an obvious way
@@ -79,6 +79,7 @@ public class QueenTest {
         for (int i : squares) {
             assertTrue(moveList.contains(i));
         }
+        assertEquals(squares.size(), moveList.size());
     }
 
     @Test
@@ -94,6 +95,7 @@ public class QueenTest {
         for (int i : squares) {
             assertTrue(moveList.contains(i));
         }
+        assertEquals(squares.size(), moveList.size());
     }
 
     // when king is in check, only moves are those that prevent check
@@ -116,8 +118,6 @@ public class QueenTest {
         assertEquals(1, moveList.size());
     }
 
-    // from here on, assume that both sides mirror each other perfectly, so only test white pieces
-
     @Test
     public void testChecks2() {
         board.addPiece(testQueenW);
@@ -127,7 +127,7 @@ public class QueenTest {
     }
 
 
-    // queen can't away when pinned
+    // queen can't move away when pinned
     @Test
     public void testPin() {
         board.addPiece(testQueenW);
