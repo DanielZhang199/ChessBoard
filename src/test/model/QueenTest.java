@@ -22,13 +22,14 @@ public class QueenTest {
         // board has white king on e1, queens on d1 and d8 when needed, and black king on e8
     }
 
-    // No constructor test, as there is no unique constructor
-
     @Test
-    public void testName() {  // as getter methods will not be checked implicitly in an obvious way
-        assertEquals("Q", testQueenB.getName());
-        assertEquals("Q", testQueenW.getName());
+    public void testConstructor() {
+        assertEquals("B", testQueenB.getName());
+        assertEquals("B", testQueenW.getName());
+        assertEquals("W", testQueenW.getAllegiance());
+        assertEquals("B", testQueenB.getAllegiance());
     }
+
 
     @Test
     public void testGetMovesNoObstacles() {
@@ -133,7 +134,7 @@ public class QueenTest {
         board.addPiece(testQueenW);
         testQueenW.setPosition(44);
         board.addPiece(new Rook("B", 12));
-        Set<Integer> moveList = testQueenB.getMoves(board);
+        Set<Integer> moveList = testQueenW.getMoves(board);
         List<Integer> squares = Arrays.asList(52, 36, 28, 20, 12);
         for (int i : squares) {
             assertTrue(moveList.contains(i));

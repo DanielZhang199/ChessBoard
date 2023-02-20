@@ -19,16 +19,17 @@ public class RookTest {
         testRookW = new Rook("W", 56);
         testRookB = new Rook("B", 0);
         board = new GameBoard(true);
-        // board has white king on e1, rooks on h1 and h8 as needed, and black king on e8
+        // board has white king on e1, rooks on a1 and a8 as needed, and black king on e8
     }
-
-    // No constructor test, as there is no unique constructor
 
     @Test
-    public void testName() {  // as getter methods will not be checked implicitly in an obvious way
-        assertEquals("Q", testRookB.getName());
-        assertEquals("Q", testRookW.getName());
+    public void testConstructor() {
+        assertEquals("B", testRookB.getName());
+        assertEquals("B", testRookW.getName());
+        assertEquals("W", testRookW.getAllegiance());
+        assertEquals("B", testRookB.getAllegiance());
     }
+
 
     @Test
     public void testGetMovesNoObstacles() {
@@ -78,7 +79,7 @@ public class RookTest {
     }
 
     @Test
-    public void testCanCaptureEnemyMirror() {  // test that queen will stop before own pieces, but can capture enemy pieces
+    public void testCanCaptureEnemyMirror() {
         board.addPiece(testRookB);
         board.addPiece(new Bishop("B", 3));
         board.addPiece(new Knight("W", 48));
@@ -126,7 +127,7 @@ public class RookTest {
         board.addPiece(testRookW);
         testRookW.setPosition(44);
         board.addPiece(new Rook("B", 12));
-        Set<Integer> moveList = testRookB.getMoves(board);
+        Set<Integer> moveList = testRookW.getMoves(board);
         List<Integer> squares = Arrays.asList(52, 36, 28, 20, 12);
         for (int i : squares) {
             assertTrue(moveList.contains(i));

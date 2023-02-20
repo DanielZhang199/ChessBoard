@@ -26,8 +26,8 @@ public class KnightTest {
     public void testConstructor() {
         assertEquals("N", testKnightB.getName());
         assertEquals("N", testKnightW.getName());
-        assertEquals("W", testKnightW.getName());
-        assertEquals("B", testKnightB.getName());
+        assertEquals("W", testKnightW.getAllegiance());
+        assertEquals("B", testKnightB.getAllegiance());
     }
 
     @Test
@@ -61,6 +61,7 @@ public class KnightTest {
         board.addPiece(new Rook("B", 16));
         board.addPiece(new Pawn("B", 10));
         board.addPiece(new Pawn("B", 11));
+        board.movePiece(60, 59); // to set board to black to move, once turns are implemented
         assertEquals(1, testKnightW.getMoves(board).size());
         assertTrue(testKnightW.getMoves(board).contains(18));
     }
@@ -129,6 +130,6 @@ public class KnightTest {
         board.addPiece(testKnightW);
         testKnightW.setPosition(44);
         board.addPiece(new Rook("B", 12));
-        assertEquals(0, testKnightB.getMoves(board).size());
+        assertEquals(0, testKnightW.getMoves(board).size());
     }
 }
