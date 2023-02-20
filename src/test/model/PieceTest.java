@@ -11,9 +11,7 @@ class PieceTest {
     public void testConstructor() {
         assertEquals(0, testPiece.getPosition());
         assertEquals("B", testPiece.getAllegiance());
-        Piece newTestPiece = new King("W", 12);
-        assertEquals("W", newTestPiece.getAllegiance());
-        assertEquals(12, newTestPiece.getPosition());
+        assertFalse(testPiece.isMoved());
     }
 
     @Test
@@ -30,6 +28,12 @@ class PieceTest {
         assertEquals(32, testPiece.getPosition());
         testPiece.setPosition(10);
         assertEquals(10, testPiece.getPosition());
+    }
+
+    @Test
+    public void testMove() {
+        testPiece.setPosition(1);
+        assertTrue(testPiece.isMoved());
     }
 
 }
