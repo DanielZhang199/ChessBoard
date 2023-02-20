@@ -41,6 +41,30 @@ public class KingTest {
         }
     }
 
+    @Test
+    public void testCastleKingSideW() {
+
+
+    }
+
+    @Test
+    public void testCastleQueenSideW() {
+
+
+    }
+
+    @Test
+    public void testCastleKingSideB() {
+
+
+    }
+
+    @Test
+    public void testCastleQueenSideB() {
+
+
+    }
+
 
     // test that king can't capture own pieces
     @Test
