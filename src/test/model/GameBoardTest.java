@@ -38,6 +38,7 @@ public class GameBoardTest {
         for (int i = 16; i <= 47; i++) {
             assertFalse(newBoard.existsPiece(i));
         }
+        assertNull(newBoard.getLastMove());
     }
     @Test
     public void testConstructorPieces() {
@@ -71,6 +72,7 @@ public class GameBoardTest {
     @Test
     public void testFirstMove() {
         newBoard.movePiece(52, 36); // this would be the move 1. e4
+        assertNotNull(newBoard.getLastMove());
         assertEquals("B", newBoard.getTurn());
         assertFalse(newBoard.existsPiece(52));  // piece is gone on e2
         assertTrue(newBoard.existsPiece(36));  // there is piece on e4
@@ -115,6 +117,31 @@ public class GameBoardTest {
         assertEquals("B", newBoard.getPiece(36).getAllegiance());
         assertEquals(30, newBoard.getNumPieces());
     }
+
+    @Test
+    public void testCastling() {
+        emptyBoard.addPiece(new Rook("W", 63));
+        assertTrue(emptyBoard.movePiece(60, 62)); // if this test fails, there is an issue with King class
+        assertEquals("R", newBoard.getPiece(61).getName());
+        assertEquals("W", newBoard.getPiece(61).getAllegiance());
+        assertEquals("K", newBoard.getPiece(62).getName());
+        assertEquals("W", newBoard.getPiece(62).getAllegiance());
+    }
+
+    @Test
+    public void testEnPassant() {
+        newBoard.movePiece(52, 36);
+        newBoard.movePiece(6, 21);
+        newBoard.movePiece(36, 28);
+        newBoard.movePiece(11, 27);
+        assertTrue(newBoard.movePiece(28, 19)); // if this test fails, there is an issue with Pawn class
+        assertEquals("P", newBoard.getPiece(19).getName());
+        assertEquals("W", newBoard.getPiece(19).getAllegiance());
+        assertFalse(newBoard.existsPiece(27));
+    }
+
+    // we don't need to test situations that forbid these moves since they should be accounted for in respective classes
+    // the previous two tests are just to make sure that board is updating appropriately.
 
     @Test
     public void testAddPieces() {
@@ -261,5 +288,33 @@ public class GameBoardTest {
         emptyBoard.addPiece(new Knight("B", 2));
         emptyBoard.addPiece(new Knight("B", 3));
         assertFalse(emptyBoard.checkStatus());
+    }
+
+    // the following moves should implicitly test that the lastMove is accurate.
+    @Test
+    public void testUndoFirstMove() {
+        newBoard.movePiece(51, 35);
+        newBoard.undo();
+        assertFalse(newBoard.existsPiece(35));
+        assertEquals("P", emptyBoard.getPiece(51).getName());
+        assertEquals("W", emptyBoard.getPiece(51).getAllegiance());
+        assertNull(newBoard.getLastMove());
+    }
+
+    @Test
+    public void testUndoMultiple() {
+        newBoard.movePiece(52, 36);
+        Move savedMove = newBoard.getLastMove();
+        newBoard.movePiece(12, 28);
+        newBoard.undo(savedMove);
+        assertFalse(newBoard.existsPiece(28));
+        assertTrue(newBoard.existsPiece(12));
+        assertTrue(newBoard.existsPiece(36));
+        assertEquals("P", emptyBoard.getPiece(12).getName());
+        assertEquals("B", emptyBoard.getPiece(12).getAllegiance());
+        newBoard.undo();  // no savedMove as there was no earlier moves made
+        assertFalse(newBoard.existsPiece(36));
+        assertEquals("P", emptyBoard.getPiece(52).getName());
+        assertEquals("W", emptyBoard.getPiece(52).getAllegiance());
     }
 }
