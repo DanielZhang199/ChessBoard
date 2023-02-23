@@ -91,6 +91,19 @@ public class PawnTest {
     }
 
     @Test
+    public void testCanDoEnPassant() {
+        board.addPiece(testPawnW);
+        board.addPiece(new Pawn("B", 11));
+        testPawnW.setPosition(36);
+        board.movePiece(36, 28);
+        board.movePiece(11, 27);
+        Set<Integer> moveList = testPawnW.getMoves(board);
+        assertTrue(moveList.contains(19));
+        assertTrue(moveList.contains(20));
+        assertEquals(2, moveList.size());
+    }
+
+    @Test
     public void testCanCaptureEnemyMirror() {
         board.addPiece(testPawnB);
         board.addPiece(new Rook("W", 19));
