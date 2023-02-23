@@ -44,14 +44,15 @@ public class MoveListTest {
         testList.addMove(testPiece, 36, 43, false, capturedPiece2);
         assertEquals(2, testList.getHumanList().size());
         assertEquals("exd3", testList.getHumanList().get(1));  // google 'en passant'
+        assertEquals("d4", testList.getHumanList().get(0));
 
-        Move firstMove = testList.getMoves().get(1);
-        assertEquals(36, firstMove.getStart());
-        assertEquals(43, firstMove.getEnd());
-        assertEquals(43, firstMove.getPiece().getPosition());
-        assertFalse(firstMove.isCheck());
-        assertNotNull(firstMove.getCaptured());
-        assertEquals(35, firstMove.getCaptured().getPosition());
+        Move previousMove = testList.getPreviousMove();
+        assertEquals(36, previousMove.getStart());
+        assertEquals(43, previousMove.getEnd());
+        assertEquals(43, previousMove.getPiece().getPosition());
+        assertFalse(previousMove.isCheck());
+        assertNotNull(previousMove.getCaptured());
+        assertEquals(35, previousMove.getCaptured().getPosition());
     }
 
     @Test
@@ -79,11 +80,10 @@ public class MoveListTest {
         Pawn testPiece = new Pawn("W", 52);
         testList.addMove(testPiece, 52, 36, false);
         assertEquals(1, testList.getHumanList().size());
-        Move move = testList.undo();
+        testList.undo();
         assertEquals(0, testList.getMoves().size());
-        assertEquals(52, move.getStart());
-        assertEquals(36, move.getEnd());
-        assertEquals(testPiece, move.getPiece());
         assertEquals(0, testList.getHumanList().size());
     }
+    // while it may be fundamentally different to undo a capture vs non-capture on an actual game board, the process for
+    // MoveList is pretty much the exact same, so there doesn't need to be another test for undo captures.
 }
