@@ -260,7 +260,7 @@ public class GameBoardTest {
     @Test
     public void testInsufficientMaterialKings() {
         assertTrue(emptyBoard.checkStatus());
-        assertEquals("Draw by Insufficient Material", emptyBoard.getStatus());
+        assertEquals("Draw By Insufficient Material", emptyBoard.getStatus());
     }
 
     @Test
@@ -269,7 +269,7 @@ public class GameBoardTest {
         emptyBoard.addPiece(new Knight("B", 1));
         emptyBoard.addPiece(new Bishop("W", 56));
         assertTrue(emptyBoard.checkStatus());
-        assertEquals("Draw by Insufficient Material", emptyBoard.getStatus());
+        assertEquals("Draw By Insufficient Material", emptyBoard.getStatus());
     }
 
     @Test
