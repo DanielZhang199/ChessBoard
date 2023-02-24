@@ -57,9 +57,9 @@ public class GameBoard {
             return false;
         }
         Piece moving = getPiece(start);
-//        if (!moving.getMoves(this).contains(end)) {
-//            return false;
-//        }
+        if (!moving.getLegalMoves(this).contains(end)) {
+            return false;
+        }
         Piece clone = clonePiece(moving);
         Piece captured = updateBoard(moving, end);
 
@@ -166,7 +166,7 @@ public class GameBoard {
     // REQUIRES: move being made is a valid move, if no piece on start square, method will throw NullPointerException
     // unfortunately there isn't much that can be done to handle this exception here.
     // EFFECTS: returns true if the side moving is in check after move, i.e. if opponent is able to capture
-    // king if it were to be making the move
+    // king if it were to be making the move; exception will only be thrown if there is no piece found at start
     public boolean testCheck(int start, int end) throws NullPointerException {
         ArrayList<Piece> original = tempBoard();
         Piece moving = getPiece(start);
