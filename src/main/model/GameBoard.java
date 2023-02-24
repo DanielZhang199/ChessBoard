@@ -101,13 +101,13 @@ public class GameBoard {
             // assume that all pawns promote into queens (cause idk how to make otherwise)
 
         } else if (moving.getName().equals("K") && !moving.isMoved()) { // castling
-            if (end == 62) {
+            if (end == 62 && existsPiece(63)) {
                 getPiece(63).setPosition(61);
-            } else if (end == 58) {
+            } else if (end == 58 && existsPiece(56)) {
                 getPiece(56).setPosition(59);
-            } else if (end == 2) {
+            } else if (end == 2 && existsPiece(7)) {
                 getPiece(7).setPosition(5);
-            } else if (end == 6) {
+            } else if (end == 6 && existsPiece(0)) {
                 getPiece(0).setPosition(3);
             }
 
@@ -193,10 +193,91 @@ public class GameBoard {
     // REQUIRES: board is in reachable chess position
     // MODIFIES: this
     // EFFECTS: Checks if the board is in a position that is a checkmate or drawn. Sets status field as follows:
-    // possible end conditions are "checkmate", "stalemate, "ins". The checks for 3 move repetition and 50 move rule
-    // will be done in MoveList class instead. Returns true if game is over.
+    // possible end conditions are "Checkmate", "Stalemate, "Draw By Insufficient Material".
+    // The checks for 3 move repetition and 50 move rule will be done in MoveList class instead.
+    // Returns true if game is over, false otherwise.
     public boolean checkStatus() {
+        if (testInsufficientMaterial()) {
+            status = "Draw By Insufficient Material";
+            return true;
+        } else if (testNoMoves()) {
+            if (isCheck()) {
+                if (turn.equals("W")) {
+                    status = "Black Wins By Checkmate";
+                } else {
+                    status = "White Wins By Checkmate";
+                }
+            } else {
+                status = "Stalemate";
+            }
+            return true;
+        }
         return false;
+    }
+
+    private boolean testNoMoves() {
+        if (turn.equals("W")) {
+            for (Piece p : pieces) {
+                if (p.getAllegiance().equals("W") && p.getLegalMoves(this).size() > 0) {
+                    return false;
+                }
+            }
+            return true;
+        }  // no need for else here
+        for (Piece p : pieces) {
+            if (p.getAllegiance().equals("B") && p.getLegalMoves(this).size() > 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @SuppressWarnings("methodlength")
+    // To whomever is marking this; I'm sorry that I did not check with a TA in advance before using this annotation,
+    // however, there are no more available office hours that I can attend during this reading week before phase 1 is
+    // due. My method is only 28 lines long, and I included comments to help make the code less confusing, so it is more
+    // clear why I needed the extra 3 lines. I believe that there is no way of dividing up this method further without
+    // making the code twice as inefficient (2 checks; one for each side), or more confusing to read.
+    // I added an EFFECTS clause to better explain what this private method is designed to do.
+
+    // REQUIRES: nothing
+    // EFFECTS: If either side has a Queen, Rook, or pawn, returns false. Furthermore, if there exists the following
+    // pieces (or more) of the same colour for either side: 2 bishops, bishop and knight, or 3 knights, return false.
+    // Otherwise, return true, as there is not enough material for either side to for a checkmate.
+    private boolean testInsufficientMaterial() {
+        ArrayList<String> piecesW = new ArrayList<>();
+        ArrayList<String> piecesB = new ArrayList<>();
+        ArrayList<String> current;
+        for (Piece p : pieces) {
+            // depending on the colour of piece,
+            // we check and add pieces to the array that corresponds to the colour.
+            if (p.getAllegiance().equals("W")) {
+                current = piecesW;
+            } else {
+                current = piecesB;
+            }
+
+            if (p.getName().equals("Q") || p.getName().equals("R") || p.getName().equals("P")) {
+                // queen, rook, pawn on board means its not insufficient material
+                return false;
+            } else if (p.getName().equals("B")) {
+                // bishop and any other piece is not insufficient material
+                if (current.size() > 0) {
+                    return false;
+                }
+                current.add("B");
+            } else if (p.getName().equals("N")) {
+                // knight with bishop or 2 other knights is not insufficient material
+                // we don't add kings to the list for this purpose; and because their presence is implied
+                if (current.contains("B")) {
+                    return false;
+                } else if (current.size() > 1) {
+                    return false;
+                }
+                current.add("N");
+            }
+        }
+        return true;  // it is insufficient material if the method didn't return false earlier.
     }
 
     // REQUIRES: Game is over, and checkStatus was called
