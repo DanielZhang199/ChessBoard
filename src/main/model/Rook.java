@@ -10,7 +10,7 @@ public class Rook extends Piece {
         super(allegiance, position);
     }
 
-    // EFFECTS: returns list of all squares rook can move to following rules of chess
+    // EFFECTS: returns list of all squares rook can move threaten
     public Set<Integer> getMoves(GameBoard board) {
         return super.getMovesOrthogonal(board);
     }

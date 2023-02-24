@@ -26,7 +26,7 @@ public abstract class Piece {
 
     // REQUIRES: position is a valid square to which the piece can move, and within interval [0, 63]
     // MODIFIES: this
-    // EFFECTS: changes position of the piece to specified new position
+    // EFFECTS: changes position of the piece to specified new position, flags the piece to have moved
     public void setPosition(int position) {
         this.position = position;
         if (!moved) {
@@ -46,12 +46,14 @@ public abstract class Piece {
         return moved;
     }
 
+    // EFFECTS: returns the type of piece this is
     abstract String getName();
 
+    // EFFECTS: returns a set of squares that the piece can move to
     abstract Set<Integer> getMoves(GameBoard b);
 
-    // EFFECTS: calls get moves, and filters out all moves that would not be allowed due to check
-    public Set<Integer> getLegalMoves(GameBoard b) {  // removes all moves that result in check
+    // EFFECTS: calls getMoves, and filters out illegal moves (those that would result in staying in check)
+    public Set<Integer> getLegalMoves(GameBoard b) {
         Set<Integer> moves = getMoves(b);
         Set<Integer> illegalMoves = new HashSet<>();
         for (int i : moves) {

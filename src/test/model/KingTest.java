@@ -77,10 +77,8 @@ public class KingTest {
 
     @Test
     public void testNoCastleWhenKingMoved() {
-        testKingW.setPosition(59);
+        testKingW.setPosition(60);
         board.addPiece(new Rook("W", 63));
-        board.movePiece(59, 60);
-        board.movePiece(4, 3);
         Set<Integer> moveList = testKingW.getLegalMoves(board);
         assertEquals(5, moveList.size());
         assertFalse(moveList.contains(62));

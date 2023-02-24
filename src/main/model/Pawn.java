@@ -10,7 +10,7 @@ public class Pawn extends Piece {
         super(allegiance, position);
     }
 
-    // EFFECTS: returns list of all squares pawn can move to following rules of chess
+    // EFFECTS: returns list of all squares pawn can move to
     // note that white and black pawns move in different directions
     public Set<Integer> getMoves(GameBoard board) {
         if (allegiance.equals("W")) {

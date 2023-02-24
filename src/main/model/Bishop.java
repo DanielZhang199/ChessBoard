@@ -12,7 +12,7 @@ public class Bishop extends Piece {
         super(allegiance, position);
     }
 
-    // EFFECTS: returns list of all squares bishop can move to following rules of chess
+    // EFFECTS: returns list of all squares bishop can move to
     public Set<Integer> getMoves(GameBoard board) {
         return getMovesDiagonal(board);
     }
