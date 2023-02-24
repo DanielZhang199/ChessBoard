@@ -24,18 +24,18 @@ public class RookTest {
 
     @Test
     public void testConstructor() {
-        assertEquals("B", testRookB.getName());
-        assertEquals("B", testRookW.getName());
+        assertEquals("R", testRookB.getName());
+        assertEquals("R", testRookW.getName());
         assertEquals("W", testRookW.getAllegiance());
         assertEquals("B", testRookB.getAllegiance());
     }
 
 
     @Test
-    public void testGetMovesNoObstacles() {
+    public void testGetLegalMovesNoObstacles() {
         board.addPiece(testRookW);
         testRookW.setPosition(43);
-        Set<Integer> moveList = testRookW.getMoves(board);
+        Set<Integer> moveList = testRookW.getLegalMoves(board);
         assertEquals(14, moveList.size()); // rook should be able to see 14 squares
         List<Integer> squares = Arrays.asList(3, 11, 19, 27, 35, 51, 59, 40, 41, 42, 44, 45, 46, 47);
 
@@ -52,7 +52,7 @@ public class RookTest {
         board.addPiece(new Rook("W", 57));
         board.addPiece(new Pawn("W", 48));
         board.addPiece(new Pawn("W", 49));
-        assertEquals(0, testRookW.getMoves(board).size());
+        assertEquals(0, testRookW.getLegalMoves(board).size());
     }
 
     @Test
@@ -62,7 +62,7 @@ public class RookTest {
         board.addPiece(new Pawn("B", 8));
         board.addPiece(new Pawn("B", 9));
         board.movePiece(60, 59); // to set board to black to move, once turns are implemented
-        assertEquals(0, testRookB.getMoves(board).size());
+        assertEquals(0, testRookB.getLegalMoves(board).size());
     }
 
     @Test
@@ -70,7 +70,7 @@ public class RookTest {
         board.addPiece(testRookW);
         board.addPiece(new Rook("W", 58));
         board.addPiece(new Knight("B", 32));
-        Set<Integer> moveList = testRookW.getMoves(board);
+        Set<Integer> moveList = testRookW.getLegalMoves(board);
         List<Integer> squares = Arrays.asList(57, 48, 40, 32);
         for (int i : squares) {
             assertTrue(moveList.contains(i));
@@ -84,8 +84,8 @@ public class RookTest {
         board.addPiece(new Bishop("B", 3));
         board.addPiece(new Knight("W", 48));
         board.movePiece(60, 59);
-        Set<Integer> moveList = testRookB.getMoves(board);
-        List<Integer> squares = Arrays.asList(1, 2, 8, 16, 24, 32, 48);
+        Set<Integer> moveList = testRookB.getLegalMoves(board);
+        List<Integer> squares = Arrays.asList(1, 2, 8, 16, 24, 32, 40, 48);
         for (int i : squares) {
             assertTrue(moveList.contains(i));
         }
@@ -97,7 +97,7 @@ public class RookTest {
     public void testChecks1() {
         board.addPiece(testRookW);
         board.addPiece(new Queen("B", 59));
-        Set<Integer> moveList = testRookW.getMoves(board);
+        Set<Integer> moveList = testRookW.getLegalMoves(board);
         assertTrue(moveList.contains(59));
         assertEquals(1, moveList.size());
     }
@@ -107,7 +107,7 @@ public class RookTest {
         board.addPiece(testRookB);
         board.addPiece(new Rook("W", 57));
         board.movePiece(57, 1);
-        Set<Integer> moveList = testRookB.getMoves(board);
+        Set<Integer> moveList = testRookB.getLegalMoves(board);
         assertTrue(moveList.contains(1));
         assertEquals(1, moveList.size());
     }
@@ -117,7 +117,7 @@ public class RookTest {
         board.addPiece(testRookW);
         board.addPiece(new Pawn("B", 51));
         board.addPiece(new Rook("B", 12));
-        assertEquals(0, testRookW.getMoves(board).size()); // have to move king to prevent check
+        assertEquals(0, testRookW.getLegalMoves(board).size()); // have to move king to prevent check
     }
 
 
@@ -127,7 +127,7 @@ public class RookTest {
         board.addPiece(testRookW);
         testRookW.setPosition(44);
         board.addPiece(new Rook("B", 12));
-        Set<Integer> moveList = testRookW.getMoves(board);
+        Set<Integer> moveList = testRookW.getLegalMoves(board);
         List<Integer> squares = Arrays.asList(52, 36, 28, 20, 12);
         for (int i : squares) {
             assertTrue(moveList.contains(i));

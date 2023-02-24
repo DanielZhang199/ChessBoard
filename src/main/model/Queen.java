@@ -9,9 +9,11 @@ public class Queen extends Piece {
         super(allegiance, position);
     }
 
-    // EFFECTS: returns set of all squares queen can move to following rules of chess
+    // EFFECTS: returns set of all squares queen can move to regardless of check
     public Set<Integer> getMoves(GameBoard board) {
-        return null;
+        Set<Integer> result = getMovesOrthogonal(board);
+        result.addAll(getMovesDiagonal(board));
+        return result;
     }
 
     public String getName() {
