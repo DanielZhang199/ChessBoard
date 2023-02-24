@@ -34,7 +34,7 @@ public class BishopTest {
     public void testGetMovesNoObstacles() {
         board.addPiece(testBishopW);
         testBishopW.setPosition(43);
-        Set<Integer> moveList = testBishopW.getMoves(board);
+        Set<Integer> moveList = testBishopW.getLegalMoves(board);
         assertEquals(11, moveList.size()); // bishop should be able to see 11 squares
         List<Integer> squares = Arrays.asList(16, 25, 34, 52, 61, 57, 50, 36, 29, 22, 15);
 
@@ -50,7 +50,7 @@ public class BishopTest {
         board.addPiece(testBishopW);
         board.addPiece(new Rook("W", 49));
         board.addPiece(new Pawn("W", 51));
-        assertEquals(0, testBishopW.getMoves(board).size());
+        assertEquals(0, testBishopW.getLegalMoves(board).size());
     }
 
     @Test
@@ -59,7 +59,7 @@ public class BishopTest {
         board.addPiece(new Rook("B", 9));
         board.addPiece(new Pawn("B", 11));
         board.movePiece(60, 59); // to set board to black to move, once turns are implemented
-        assertEquals(0, testBishopB.getMoves(board).size());
+        assertEquals(0, testBishopB.getLegalMoves(board).size());
     }
 
     @Test
@@ -67,7 +67,7 @@ public class BishopTest {
         board.addPiece(testBishopW);
         board.addPiece(new Rook("W", 40));
         board.addPiece(new Knight("B", 37));
-        Set<Integer> moveList = testBishopW.getMoves(board);
+        Set<Integer> moveList = testBishopW.getLegalMoves(board);
         List<Integer> squares = Arrays.asList(49, 51, 44, 37);
         for (int i : squares) {
             assertTrue(moveList.contains(i));
@@ -82,7 +82,7 @@ public class BishopTest {
         board.addPiece(new Knight("B", 38));
         board.movePiece(60, 59); // to set board to black to move, once turns are implemented
 
-        Set<Integer> moveList = testBishopB.getMoves(board);
+        Set<Integer> moveList = testBishopB.getLegalMoves(board);
         List<Integer> squares = Arrays.asList(9, 16, 11, 20, 29);
         for (int i : squares) {
             assertTrue(moveList.contains(i));
@@ -95,7 +95,7 @@ public class BishopTest {
     public void testChecks1() {
         board.addPiece(testBishopW);
         board.addPiece(new Queen("B", 24));
-        Set<Integer> moveList = testBishopW.getMoves(board);
+        Set<Integer> moveList = testBishopW.getLegalMoves(board);
         assertTrue(moveList.contains(51));
         assertEquals(1, moveList.size());  // there is only one legal move (Bd2)
     }
@@ -105,7 +105,7 @@ public class BishopTest {
         board.addPiece(testBishopB);
         board.addPiece(new Queen("W", 56));
         board.movePiece(56, 32);
-        Set<Integer> moveList = testBishopB.getMoves(board);
+        Set<Integer> moveList = testBishopB.getLegalMoves(board);
         assertTrue(moveList.contains(11));
         assertEquals(1, moveList.size());
     }
@@ -115,7 +115,7 @@ public class BishopTest {
         board.addPiece(testBishopW);
         board.addPiece(new Pawn("B", 51));
         board.addPiece(new Rook("B", 12));
-        assertEquals(0, testBishopW.getMoves(board).size()); // have to move king to prevent check
+        assertEquals(0, testBishopW.getLegalMoves(board).size()); // have to move king to prevent check
     }
 
     @Test
@@ -123,6 +123,6 @@ public class BishopTest {
         board.addPiece(testBishopW);
         testBishopW.setPosition(44);
         board.addPiece(new Rook("B", 12));
-        assertEquals(0, testBishopW.getMoves(board).size());
+        assertEquals(0, testBishopW.getLegalMoves(board).size());
     }
 }

@@ -7,7 +7,6 @@ import java.util.Set;
 public class Bishop extends Piece {
     // while bishops are associated with a colour square, this is a consequence of their movement rather than an
     // intrinsic property of the piece itself
-    private final String name = "B";
 
     public Bishop(String allegiance, int position) {
         super(allegiance, position);
@@ -15,10 +14,10 @@ public class Bishop extends Piece {
 
     // EFFECTS: returns list of all squares bishop can move to following rules of chess
     public Set<Integer> getMoves(GameBoard board) {
-        return null;
+        return getMovesDiagonal(board);
     }
 
     public String getName() {
-        return name;
+        return "B";
     }
 }
