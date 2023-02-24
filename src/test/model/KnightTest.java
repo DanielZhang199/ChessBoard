@@ -33,10 +33,36 @@ public class KnightTest {
     @Test
     public void testGetMovesNoObstacles() {
         board.addPiece(testKnightW);
+        testKnightW.setPosition(35);
+        Set<Integer> moveList = testKnightW.getLegalMoves(board);
+        assertEquals(8, moveList.size()); // knight should be able to see 6 squares
+        List<Integer> squares = Arrays.asList(18, 20, 25, 29, 41, 45, 50, 52);
+
+        for (int i : squares) {
+            assertTrue(moveList.contains(i));
+        }
+    }
+
+    @Test
+    public void testGetMovesSide() {
+        board.addPiece(testKnightW);
         testKnightW.setPosition(51);
-        Set<Integer> moveList = testKnightW.getMoves(board);
-        assertEquals(8, moveList.size()); // knight should be able to see 8 squares
-        List<Integer> squares = Arrays.asList(49, 58, 60, 53, 37, 28, 26, 33);
+        Set<Integer> moveList = testKnightW.getLegalMoves(board);
+        assertEquals(6, moveList.size()); // knight should be able to see 6 squares
+        List<Integer> squares = Arrays.asList(57, 41, 34, 36, 45, 61);
+
+        for (int i : squares) {
+            assertTrue(moveList.contains(i));
+        }
+    }
+
+    @Test
+    public void testGetMovesCorner() {
+        board.addPiece(testKnightW);
+        testKnightW.setPosition(56);
+        Set<Integer> moveList = testKnightW.getLegalMoves(board);
+        assertEquals(2, moveList.size());
+        List<Integer> squares = Arrays.asList(41, 50);
 
         for (int i : squares) {
             assertTrue(moveList.contains(i));
@@ -51,8 +77,8 @@ public class KnightTest {
         board.addPiece(new Rook("W", 40));
         board.addPiece(new Pawn("W", 50));
         board.addPiece(new Pawn("W", 51));
-        assertEquals(1, testKnightW.getMoves(board).size());
-        assertTrue(testKnightW.getMoves(board).contains(42));
+        assertEquals(1, testKnightW.getLegalMoves(board).size());
+        assertTrue(testKnightW.getLegalMoves(board).contains(42));
     }
 
     @Test
@@ -62,8 +88,8 @@ public class KnightTest {
         board.addPiece(new Pawn("B", 10));
         board.addPiece(new Pawn("B", 11));
         board.movePiece(60, 59); // to set board to black to move, once turns are implemented
-        assertEquals(1, testKnightW.getMoves(board).size());
-        assertTrue(testKnightW.getMoves(board).contains(18));
+        assertEquals(1, testKnightB.getLegalMoves(board).size());
+        assertTrue(testKnightB.getLegalMoves(board).contains(18));
     }
 
     @Test
@@ -71,7 +97,7 @@ public class KnightTest {
         board.addPiece(testKnightW);
         board.addPiece(new Rook("W", 40));
         board.addPiece(new Knight("B", 42));
-        Set<Integer> moveList = testKnightW.getMoves(board);
+        Set<Integer> moveList = testKnightW.getLegalMoves(board);
         List<Integer> squares = Arrays.asList(42, 51);
         for (int i : squares) {
             assertTrue(moveList.contains(i));
@@ -85,7 +111,7 @@ public class KnightTest {
         board.addPiece(new Bishop("B", 16));
         board.addPiece(new Knight("W", 18));
         board.movePiece(60, 59);
-        Set<Integer> moveList = testKnightB.getMoves(board);
+        Set<Integer> moveList = testKnightB.getLegalMoves(board);
         List<Integer> squares = Arrays.asList(18, 11);
         for (int i : squares) {
             assertTrue(moveList.contains(i));
@@ -98,7 +124,7 @@ public class KnightTest {
     public void testChecks1() {
         board.addPiece(testKnightW);
         board.addPiece(new Queen("B", 24));
-        Set<Integer> moveList = testKnightW.getMoves(board);
+        Set<Integer> moveList = testKnightW.getLegalMoves(board);
         assertTrue(moveList.contains(42));
         assertTrue(moveList.contains(51));
         assertEquals(2, moveList.size());
@@ -109,7 +135,7 @@ public class KnightTest {
         board.addPiece(testKnightB);
         board.addPiece(new Queen("W", 56));
         board.movePiece(56, 32);
-        Set<Integer> moveList = testKnightB.getMoves(board);
+        Set<Integer> moveList = testKnightB.getLegalMoves(board);
         assertTrue(moveList.contains(11));
         assertTrue(moveList.contains(18));
         assertEquals(2, moveList.size());
@@ -120,7 +146,7 @@ public class KnightTest {
         board.addPiece(testKnightW);
         board.addPiece(new Pawn("B", 51));
         board.addPiece(new Rook("B", 12));
-        assertEquals(0, testKnightW.getMoves(board).size()); // have to move king to prevent check
+        assertEquals(0, testKnightW.getLegalMoves(board).size()); // have to move king to prevent check
     }
 
 
@@ -130,6 +156,6 @@ public class KnightTest {
         board.addPiece(testKnightW);
         testKnightW.setPosition(44);
         board.addPiece(new Rook("B", 12));
-        assertEquals(0, testKnightW.getMoves(board).size());
+        assertEquals(0, testKnightW.getLegalMoves(board).size());
     }
 }
