@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Pawn extends Piece {
-    private final String; // pawns don't have a character for notation, so this is just for consistency
 
     public Pawn(String allegiance, int position) {
         super(allegiance, position);
