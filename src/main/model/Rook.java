@@ -9,7 +9,8 @@ public class Rook extends Piece {
         super(allegiance, position);
     }
 
-    // EFFECTS: returns list of all squares rook can move threaten
+    // EFFECTS: returns list of all squares rook can move threaten; note that this includes moves that would leave
+    // the rook's king in check
     public Set<Integer> getMoves(GameBoard board) {
         return super.getMovesOrthogonal(board);
     }

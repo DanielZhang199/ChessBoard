@@ -9,8 +9,8 @@ public class Pawn extends Piece {
         super(allegiance, position);
     }
 
-    // EFFECTS: returns list of all squares pawn can move to
-    // note that white and black pawns move in different directions
+    // EFFECTS: returns list of all squares pawn can move to; note that this includes moves that would leave
+    // the pawn's king in check
     public Set<Integer> getMoves(GameBoard board) {
         if (allegiance.equals("W")) {
             return getMovesWhite(board);

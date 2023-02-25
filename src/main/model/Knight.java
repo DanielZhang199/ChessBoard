@@ -10,7 +10,8 @@ public class Knight extends Piece {
         super(allegiance, position);
     }
 
-    // EFFECTS: returns list of all squares knight can move to; knights cannot be blocked, except on end square
+    // EFFECTS: returns list of all squares knight can move to; knights cannot be blocked, except on end square;
+    // note that this includes moves that would leave the knight's king in check
     public Set<Integer> getMoves(GameBoard board) {
         Set<Integer> result = new HashSet<>(Arrays.asList(position - 17, position - 15, position - 10, position - 6,
                 position + 6, position + 10, position + 15, position + 17));

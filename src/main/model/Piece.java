@@ -9,14 +9,15 @@ public abstract class Piece {
     protected String allegiance;  // "B" for black, "W" for white
     protected boolean moved;  // whether the piece has moved
 
-    // EFFECTS: sets the side and position of the piece
+    // EFFECTS: sets the side and position of the piece, affirms that the piece has not yet moved
     protected Piece(String allegiance, int position) {
         this.allegiance = allegiance;
         this.position = position;
         this.moved = false;
     }
 
-    // REQUIRES: position is a valid square to which the piece can move, and within interval [0, 63]
+    // REQUIRES: position is a valid square to which the piece can move as governed by the board,
+    // position is within interval [0, 63]
     // MODIFIES: this
     // EFFECTS: changes position of the piece to specified new position, flags the piece to have moved
     public void setPosition(int position) {
@@ -41,7 +42,9 @@ public abstract class Piece {
     // EFFECTS: returns the type of piece this is
     public abstract String getName();
 
-    // EFFECTS: returns a set of squares that the piece can move to
+    // EFFECTS: returns a set of squares that the piece can move to:
+    // this method is public as when testing for check, we need to know if pieces can capture the king despite moving
+    // into check if it were their turn.
     public abstract Set<Integer> getMoves(GameBoard b);
 
     // EFFECTS: calls getMoves, and filters out illegal moves (those that would result in staying in check)

@@ -10,8 +10,8 @@ public class King extends Piece {
         super(allegiance, position);
     }
 
-    // EFFECTS: returns set of all squares king can move to, excluding castling
-    // as you can not castle to capture a piece, or capture the enemy king (obviously)
+    // EFFECTS: returns set of all squares king can move to (i.e. threaten), excluding castling
+    // as you can not castle to capture a piece, or capture the enemy king
     public Set<Integer> getMoves(GameBoard board) {
         Set<Integer> result = new HashSet<>(Arrays.asList(position + 1, position - 1, position + 7, position + 8,
                 position + 9, position - 7, position - 8, position - 9));
