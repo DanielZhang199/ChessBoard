@@ -7,7 +7,6 @@ import ui.exceptions.PieceNoMovesException;
 import ui.exceptions.PieceNotExistException;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -39,20 +38,16 @@ public class ChessGame {
             } else if (action.startsWith("u")) {
                 undoMove();
             } else if (action.startsWith("m")) {
-                showMoves();
-            } else {
+                showMoves("");
+            } else if (board.getStatus() == null) {
                 handleMove(action);
+            } else {
+                System.out.println("You cannot move pieces; the game is over!");
             }
         }
         System.out.println("\n --Exiting Application--");
     }
 
-    private void showMoves() {
-    }
-
-    private void undoMove() {
-
-    }
 
     private void init() {
         board = new GameBoard();
@@ -63,14 +58,10 @@ public class ChessGame {
 
     private void displayInfo() {
         int turn = moves.getMoves().size();
-        if (turn > 0) {
-            if (turn % 2 == 0) {
-                System.out.println("Turn " + (turn / 2 + 1) + ", White to Move:");
-            } else {
-                System.out.println("Turn " + (turn / 2 + 1) + ", Black to Move:");
-            }
+        if (turn % 2 == 0) {
+            System.out.println("Turn " + (turn / 2 + 1) + ", White to Move:");
         } else {
-            System.out.println("-NEW GAME- \nTurn 1, White to Move:");
+            System.out.println("Turn " + (turn / 2 + 1) + ", Black to Move:");
         }
         displayBoard();
     }
@@ -119,10 +110,10 @@ public class ChessGame {
     private void makeMove(int start, String square) throws NotValidSquareException {
         int end = MoveList.toCoordinate(square);
         if (board.movePiece(start, end)) {
+            moves.addMove(board.getLastMove());
             if (board.checkStatus()) {
                 handleGameEnd(board.getStatus());
             } else {
-                moves.addMove(board.getLastMove());
                 displayInfo();
             }
         } else {
@@ -132,7 +123,55 @@ public class ChessGame {
     }
 
     private void handleGameEnd(String status) {
+        System.out.println("Game Over: " + status);
+        String result;
+        if (status.startsWith("W")) {
+            moves.wasCheckmate();
+            result = "1-0";
+        } else if (status.startsWith("B")) {
+            moves.wasCheckmate();
+            result = "0-1";
+        } else {
+            result = "1/2-1/2";
+        }
+        showMoves(result);
+        System.out.println("Position:");
+        displayBoard();
     }
+
+    private void showMoves(String result) {
+        System.out.println("Moves Played:");
+        ArrayList<String> toPrint = moves.getNotationList();
+        for (int i = 0; i < toPrint.size(); i++) {
+            if (i % 2 == 0) {  // print white's move
+                System.out.print((i / 2 + 1) + ".  " + toPrint.get(i) + "  ");
+            } else {
+                System.out.print(toPrint.get(i) + "\n");
+            }
+        }
+        if (toPrint.size() % 2 == 1) {  // if white moved last, print a new line at end
+            // result may be blank, or the score if game is over
+            System.out.print(result + "\n");
+        } else {
+            System.out.print(result);
+        }
+    }
+
+    private void undoMove() {
+        if (moves.getSize() == 0) {
+            System.out.println("Cannot undo any more moves!");
+            return;
+        }
+        moves.undo();
+        if (moves.getSize() > 0) {
+            Move last = moves.getPreviousMove();
+            board.undo(last);
+        } else {
+            board.undo();
+        }
+        displayInfo();
+    }
+
 
     private int showDestinationsOfSquare(String square)
             throws NotValidSquareException, PieceNoMovesException, PieceNotExistException, PieceBelongEnemyException {
