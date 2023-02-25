@@ -35,6 +35,16 @@ public class MoveListTest {
     }
 
     @Test
+    public void testCastleBothSides() {
+        testList.addMove(new Move(new King("W", 60), 60, 62, false));
+        testList.addMove(new Move(new King("B", 4), 4, 2, false));
+        String firstMove = testList.getNotationList().get(0);
+        String secondMove = testList.getNotationList().get(1);
+        assertEquals("O-O", firstMove);
+        assertEquals("O-O-O", secondMove);
+    }
+
+    @Test
     public void testAddCapture() {
         // this is a special case where the square of capture and ending square are not the same
         Pawn testPiece = new Pawn("B", 36);  // note these pieces are only copies of pieces on board
