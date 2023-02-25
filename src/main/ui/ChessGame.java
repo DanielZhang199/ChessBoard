@@ -21,6 +21,8 @@ public class ChessGame {
         runGame();
     }
 
+    // MODIFIES: this
+    // EFFECTS: initiates the class, and runs main loop of the game
     private void runGame() {
         boolean notDone = true;
         String action;
@@ -48,7 +50,8 @@ public class ChessGame {
         System.out.println("\n --Exiting Application--");
     }
 
-
+    // MODIFIES: this
+    // EFFECTS: initializes fields
     private void init() {
         board = new GameBoard();
         moves = new MoveList();
@@ -56,6 +59,7 @@ public class ChessGame {
         input.useDelimiter("\n");
     }
 
+    // EFFECTS: displays the turn and a console representation of the board to the console
     private void displayInfo() {
         int turn = moves.getMoves().size();
         if (turn % 2 == 0) {
@@ -66,6 +70,7 @@ public class ChessGame {
         displayBoard();
     }
 
+    // EFFECTS: prints out the board to console
     private void displayBoard() {
         ArrayList<String> squares = new ArrayList<>();
         for (int i = 0; i < 64; i++) {
@@ -92,6 +97,9 @@ public class ChessGame {
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: shows destinations that piece on inputted square can move to, and tries to move piece to square that
+    // user inputs to console. Handles exceptions that may result from bad inputs.
     private void handleMove(String square) {
         try {
             int start = showDestinationsOfSquare(square);
@@ -107,12 +115,17 @@ public class ChessGame {
         }
     }
 
+    // REQUIRES: board.getPiece(start) != null
+    // MODIFIES: this
+    // EFFECTS: tries to move piece on start square (in coordinates) to specified square (in notation); if inputted
+    // square is valid but not a possible destination square, piece will not be moved and message will be printed.
+    // if the inputted square is not a valid board coordinate, exception is thrown.
     private void makeMove(int start, String square) throws NotValidSquareException {
         int end = MoveList.toCoordinate(square);
         if (board.movePiece(start, end)) {
             moves.addMove(board.getLastMove());
             if (board.checkStatus()) {
-                handleGameEnd(board.getStatus());
+                handleGameEnd();
             } else {
                 displayInfo();
             }
@@ -122,7 +135,11 @@ public class ChessGame {
         }
     }
 
-    private void handleGameEnd(String status) {
+    // REQUIRES: board.getStatus() is not null
+    // MODIFIES: nothing
+    // EFFECTS: Prints out the end result of game and the moves to arrive at that position, then displays the position
+    private void handleGameEnd() {
+        String status = board.getStatus();
         System.out.println("Game Over: " + status);
         String result;
         if (status.startsWith("W")) {
@@ -139,6 +156,7 @@ public class ChessGame {
         displayBoard();
     }
 
+    // EFFECTS: prints out the move list in algebraic notation
     private void showMoves(String result) {
         System.out.println("Moves Played:");
         ArrayList<String> toPrint = moves.getNotationList();
@@ -157,6 +175,10 @@ public class ChessGame {
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: as long as there is a previous move saved in board, takes back that move and reverts the game to the
+    // same state as before the move was made, then displays the position.
+    // Otherwise, outputs that there are no moves to undo.
     private void undoMove() {
         if (moves.getSize() == 0) {
             System.out.println("Cannot undo any more moves!");
@@ -172,11 +194,12 @@ public class ChessGame {
         displayInfo();
     }
 
-
+    // EFFECTS: translates notation coordinate to integer coordinate and prints out notation coordinates of squares that
+    // piece on that square can move to, returns the translated integer coordinate.
     private int showDestinationsOfSquare(String square)
             throws NotValidSquareException, PieceNoMovesException, PieceNotExistException, PieceBelongEnemyException {
 
-        // using MoveList's toCoordinate static method to convert to and from algebraic notation.
+        // this method isn't super elegant since it was once part of a larger method
         int coord = MoveList.toCoordinate(square);
 
         if (!board.existsPiece(coord)) {
@@ -200,6 +223,9 @@ public class ChessGame {
     }
 
 
+    // MODIFIES: this
+    // EFFECTS: prompts the user to confirm whether or not they wish to reset the board, if they type something that
+    // starts with y, reset the board, otherwise keeps board as is.
     private void resetBoard() {
         System.out.println("Reset Board? (y/N)");
         String next = input.next().toLowerCase();
