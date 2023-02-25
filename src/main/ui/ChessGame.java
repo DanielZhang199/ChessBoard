@@ -1,13 +1,17 @@
 package ui;
 
-import model.GameBoard;
-import model.Move;
-import model.MoveList;
-import model.Piece;
+import model.*;
+import model.exceptions.NotValidSquareException;
+import ui.exceptions.PieceBelongEnemyException;
+import ui.exceptions.PieceNoMovesException;
+import ui.exceptions.PieceNotExistException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
+import java.util.Set;
 
+// todo game end checks and undo/move list
 public class ChessGame {
     private GameBoard board;
     private MoveList moves;
@@ -23,11 +27,11 @@ public class ChessGame {
         String action;
 
         init();
+        displayInfo();
 
         while (notDone) {
-            displayInfo();
+            System.out.println("Input coordinates of piece to move or a command:");
             action = input.next().toLowerCase();
-
             if (action.startsWith("q")) {
                 notDone = false;
             } else if (action.startsWith("r")) {
@@ -61,15 +65,14 @@ public class ChessGame {
         int turn = moves.getMoves().size();
         if (turn > 0) {
             if (turn % 2 == 0) {
-                System.out.println("Turn " + turn / 2 + ", White to Move:");
+                System.out.println("Turn " + (turn / 2 + 1) + ", White to Move:");
             } else {
-                System.out.println("Turn " + turn / 2 + ", Black to Move:");
+                System.out.println("Turn " + (turn / 2 + 1) + ", Black to Move:");
             }
         } else {
-            System.out.println("-NEW GAME- \nWhite to Move:");
+            System.out.println("-NEW GAME- \nTurn 1, White to Move:");
         }
         displayBoard();
-        System.out.println("Type coordinates of piece to move or a command:");
     }
 
     private void displayBoard() {
@@ -98,15 +101,76 @@ public class ChessGame {
         }
     }
 
-    private void handleMove(String action) {
-
+    private void handleMove(String square) {
+        try {
+            int start = showDestinationsOfSquare(square);
+            makeMove(start, input.next());
+        } catch (NotValidSquareException e) {
+            System.out.println("Not a valid board coordinate.");
+        } catch (PieceNoMovesException e) {
+            System.out.println("This piece cannot move!");
+        } catch (PieceNotExistException e) {
+            System.out.println("There does not exist a piece here!");
+        } catch (PieceBelongEnemyException e) {
+            System.out.println("This is not your piece!");
+        }
     }
+
+    private void makeMove(int start, String square) throws NotValidSquareException {
+        int end = MoveList.toCoordinate(square);
+        if (board.movePiece(start, end)) {
+            if (board.checkStatus()) {
+                handleGameEnd(board.getStatus());
+            } else {
+                moves.addMove(board.getLastMove());
+                displayInfo();
+            }
+        } else {
+            System.out.println("The selected piece cannot move here!");
+            // nothing will be modified, so we go back to main loop
+        }
+    }
+
+    private void handleGameEnd(String status) {
+    }
+
+    private int showDestinationsOfSquare(String square)
+            throws NotValidSquareException, PieceNoMovesException, PieceNotExistException, PieceBelongEnemyException {
+
+        // using MoveList's toCoordinate static method to convert to and from algebraic notation.
+        int coord = MoveList.toCoordinate(square);
+
+        if (!board.existsPiece(coord)) {
+            throw new PieceNotExistException();
+        }
+        Piece p = board.getPiece(coord);
+        if (!p.getAllegiance().equals(board.getTurn())) {
+            throw new PieceBelongEnemyException();
+        }
+        Set<Integer> possibleMoves = p.getLegalMoves(board);
+        if (possibleMoves.size() == 0) {
+            throw new PieceNoMovesException();
+        }
+        System.out.println("Possible destination squares (in no particular order):");
+        for (int i : possibleMoves) {
+            // ideally this should display on board, but that would be a lot of work for just 2 phases
+            System.out.print(MoveList.fromCoordinate(i) + "  ");
+        }
+        System.out.print("\nPlease enter a move from the list:");
+        return coord;
+    }
+
 
     private void resetBoard() {
         System.out.println("Reset Board? (y/N)");
-        if (input.next().equalsIgnoreCase("n")) {
+        String next = input.next().toLowerCase();
+        if (next.startsWith("y")) {
+            System.out.println("\nRESETTING BOARD\n");
             board = new GameBoard();
             moves = new MoveList();
+            displayInfo();
+        } else {
+            System.out.println("Reset Cancelled");
         }
     }
 }

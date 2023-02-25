@@ -1,17 +1,20 @@
 package model;
 
+import model.exceptions.NotValidSquareException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-
+//todo tests and methods for 3 move repetition and 50 move rule
 
 // class for list of moves in computer and human-readable notation
+// also translates between board coordinates and algebraic notation
 public class MoveList {
     // INVARIANT: moves.size() == humanList.size()
     private final ArrayList<Move> moves; // list of moves for computer
     private final ArrayList<String> notationList; // list of moves for human players to see
 
-    // list of chess columns for reference
-    private static final ArrayList<String> columns = new ArrayList<>(
+    // list of chess columns (i.e. files) for reference
+    private static final ArrayList<String> files = new ArrayList<>(
             Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h"));
 
     // MODIFIES: this
@@ -60,16 +63,38 @@ public class MoveList {
         }
         if (move.getCaptured() != null) {
             if (piece.isEmpty()) {
-                piece = columns.get(move.getStart() % 8);
+                piece = files.get(move.getStart() % 8);
             }
             capture = "x";
         }
-        return piece + capture + getCoordinate(move.getEnd()) + check;
+        return piece + capture + fromCoordinate(move.getEnd()) + check;
     }
 
-    private String getCoordinate(int square) {
-        return  columns.get(square % 8) + (8 - square / 8);
+
+    // todo tests for these methods
+    // EFFECTS: converts a coordinate into algebraic notation
+    public static String fromCoordinate(int square) {
+        return  files.get(square % 8) + (8 - square / 8);
     }
+
+    // EFFECTS: converts an algebraic notation square to a coordinate (i.e. e4 -> 36)
+    public static int toCoordinate(String square) throws NotValidSquareException {
+        if (square.length() != 2) {
+            throw new NotValidSquareException();
+        }
+        if (!(files.contains(square.substring(0, 1)) && Character.isDigit(square.charAt(1)))) {
+            throw new NotValidSquareException();
+        }
+        int file = files.indexOf(square.substring(0, 1));
+        int rank = square.charAt(1) - '0';
+
+        if (rank > 8) {  // note that rank cannot be < 0 as it was a char
+            throw new NotValidSquareException();
+        }
+
+        return file + 8 * (8 - rank);
+    }
+
 
     // REQUIRES: at least one move was made, and previous move is a check (otherwise it can't be checkmate)
     // MODIFIES: this
