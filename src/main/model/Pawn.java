@@ -22,10 +22,12 @@ public class Pawn extends Piece {
 
     private Set<Integer> getMovesWhite(GameBoard board) {
         Set<Integer> result = new HashSet<>();
-        if (board.existsPiece(position - 7) && board.getPiece(position - 7).getAllegiance().equals("B")) {
+        if (position % 8 != 7 && board.existsPiece(position - 7)
+                && board.getPiece(position - 7).getAllegiance().equals("B")) {
             result.add(position - 7);
         }
-        if (board.existsPiece(position - 9) && board.getPiece(position - 9).getAllegiance().equals("B")) {
+        if (position % 8 != 0 && board.existsPiece(position - 9)
+                && board.getPiece(position - 9).getAllegiance().equals("B")) {
             result.add(position - 9);
         }
         if (!board.existsPiece(position - 8)) {
