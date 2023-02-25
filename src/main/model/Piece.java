@@ -18,12 +18,6 @@ public abstract class Piece {
         this.moved = false;
     }
 
-    protected Piece(Piece original) {
-        this.allegiance = original.getAllegiance();
-        this.position = original.getPosition();
-        this.moved = original.isMoved();
-    }
-
     // REQUIRES: position is a valid square to which the piece can move, and within interval [0, 63]
     // MODIFIES: this
     // EFFECTS: changes position of the piece to specified new position, flags the piece to have moved
