@@ -91,7 +91,7 @@ public class PawnTest {
     }
 
     @Test
-    public void testCanDoEnPassant() {
+    public void testCanDoEnPassant1() {  // one test for each direction.
         board.addPiece(testPawnW);
         board.addPiece(new Pawn("B", 11));
         testPawnW.setPosition(36);
@@ -100,6 +100,43 @@ public class PawnTest {
         Set<Integer> moveList = testPawnW.getLegalMoves(board);
         assertTrue(moveList.contains(19));
         assertTrue(moveList.contains(20));
+        assertEquals(2, moveList.size());
+    }
+
+    @Test
+    public void testCanDoEnPassant2() {
+        board.addPiece(testPawnW);
+        board.addPiece(new Pawn("B", 13));
+        testPawnW.setPosition(36);
+        board.movePiece(36, 28);
+        board.movePiece(13, 29);
+        Set<Integer> moveList = testPawnW.getLegalMoves(board);
+        assertTrue(moveList.contains(21));
+        assertTrue(moveList.contains(20));
+        assertEquals(2, moveList.size());
+    }
+
+    @Test
+    public void testCanDoEnPassant3() {
+        board.addPiece(testPawnB);
+        board.addPiece(new Pawn("W", 51));
+        testPawnB.setPosition(36);
+        board.movePiece(51, 35);
+        Set<Integer> moveList = testPawnB.getLegalMoves(board);
+        assertTrue(moveList.contains(43));
+        assertTrue(moveList.contains(44));
+        assertEquals(2, moveList.size());
+    }
+
+    @Test
+    public void testCanDoEnPassant4() {
+        board.addPiece(testPawnB);
+        board.addPiece(new Pawn("W", 53));
+        testPawnB.setPosition(36);
+        board.movePiece(53, 37);
+        Set<Integer> moveList = testPawnB.getLegalMoves(board);
+        assertTrue(moveList.contains(44));
+        assertTrue(moveList.contains(45));
         assertEquals(2, moveList.size());
     }
 
