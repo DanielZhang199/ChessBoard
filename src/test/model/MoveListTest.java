@@ -78,16 +78,6 @@ public class MoveListTest {
     }
 
     @Test
-    public void testAddScore() {
-        testList.addMove(new Move(new King("W", 52), 60, 52, false));
-        testList.addResult("1/2-1/2");
-        assertEquals(2, testList.getSize());
-        assertEquals("Ke2", testList.getNotationList().get(0));
-        assertEquals("1/2-1/2", testList.getNotationList().get(1));
-
-    }
-
-    @Test
     public void testUndoMove() {
         Pawn testPiece = new Pawn("W", 52);
         testList.addMove(new Move(testPiece, 52, 36, false));

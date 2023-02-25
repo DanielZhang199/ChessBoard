@@ -71,13 +71,13 @@ public class GameBoard {
         Piece captured = updateBoard(moving, end);
 
         moving.setPosition(end);
+        toggleTurn();
         if (captured != null) {
             pieces.remove(captured);
             lastMove = new Move(clone, start, end, isCheck(), captured);
         } else {
             lastMove = new Move(clone, start, end, isCheck());
         }
-        toggleTurn();
         return true;
     }
 
