@@ -20,7 +20,9 @@ challenges to not feel too trivial.
 
 ## User Stories
 1. As a user, I want to be able to reset the board to the starting state.
-   1. This must be possible only though offering a draw **and** resignation.
+   1. ~~This must be possible only though offering a draw **and** resignation.~~ Since this game is played on a single 
+   computer, it would make sense that the board can be reset at any point since both players could determine the winner
+   in person.
 2. As a user, I want to be able to see a representation of the board.
 3. As a user, I want to be able to move pieces around on the board.
    1. Only as allowed by the rules of chess. 
