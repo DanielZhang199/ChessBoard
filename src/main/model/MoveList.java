@@ -110,13 +110,6 @@ public class MoveList {
         notationList.add(move);
     }
 
-    // REQUIRES: score is either '1-0', '0-1', or '1/2-1/2'
-    // MODIFIES: this
-    // EFFECTS: adds score to end of notation list to signify game end
-    public void addResult(String score) {
-        notationList.add(score);
-    }
-
     // REQUIRES: at least one move was made
     // MODIFIES: this
     // EFFECTS: removes the latest move from both arrays
