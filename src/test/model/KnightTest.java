@@ -35,7 +35,7 @@ public class KnightTest {
         board.addPiece(testKnightW);
         testKnightW.setPosition(35);
         Set<Integer> moveList = testKnightW.getLegalMoves(board);
-        assertEquals(8, moveList.size()); // knight should be able to see 6 squares
+        assertEquals(8, moveList.size()); // knight should be able to see 8 squares
         List<Integer> squares = Arrays.asList(18, 20, 25, 29, 41, 45, 50, 52);
 
         for (int i : squares) {
@@ -44,12 +44,25 @@ public class KnightTest {
     }
 
     @Test
-    public void testGetMovesSide() {
+    public void testGetMovesSideB() {
         board.addPiece(testKnightW);
         testKnightW.setPosition(51);
         Set<Integer> moveList = testKnightW.getLegalMoves(board);
         assertEquals(6, moveList.size()); // knight should be able to see 6 squares
         List<Integer> squares = Arrays.asList(57, 41, 34, 36, 45, 61);
+
+        for (int i : squares) {
+            assertTrue(moveList.contains(i));
+        }
+    }
+
+    @Test
+    public void testGetMovesSideR() {
+        board.addPiece(testKnightW);
+        testKnightW.setPosition(47);
+        Set<Integer> moveList = testKnightW.getLegalMoves(board);
+        assertEquals(4, moveList.size()); // knight should be able to see 4 squares
+        List<Integer> squares = Arrays.asList(30, 37, 53, 62);
 
         for (int i : squares) {
             assertTrue(moveList.contains(i));
