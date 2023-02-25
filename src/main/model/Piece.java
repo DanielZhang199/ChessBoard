@@ -41,10 +41,10 @@ public abstract class Piece {
     }
 
     // EFFECTS: returns the type of piece this is
-    abstract String getName();
+    public abstract String getName();
 
     // EFFECTS: returns a set of squares that the piece can move to
-    abstract Set<Integer> getMoves(GameBoard b);
+    public abstract Set<Integer> getMoves(GameBoard b);
 
     // EFFECTS: calls getMoves, and filters out illegal moves (those that would result in staying in check)
     public Set<Integer> getLegalMoves(GameBoard b) {
