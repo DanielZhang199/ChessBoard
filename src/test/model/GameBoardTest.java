@@ -70,6 +70,12 @@ public class GameBoardTest {
     // existsPiece(), getPiece() will be tested implicitly
 
     @Test
+    public void testInvalidMoves() {
+        assertFalse(newBoard.movePiece(44, 36)); //   no piece on 44
+        assertFalse(newBoard.movePiece(52, 28)); // not a valid game
+    }
+
+    @Test
     public void testFirstMove() {
         newBoard.movePiece(52, 36); // this would be the move 1. e4
         assertNotNull(newBoard.getLastMove());
@@ -124,13 +130,51 @@ public class GameBoardTest {
     }
 
     @Test
-    public void testCastling() {
+    public void testCastling1() {
         emptyBoard.addPiece(new Rook("W", 63));
         assertTrue(emptyBoard.movePiece(60, 62)); // if this test fails, there is an issue with King class
         assertEquals("R", emptyBoard.getPiece(61).getName());
         assertEquals("W", emptyBoard.getPiece(61).getAllegiance());
         assertEquals("K", emptyBoard.getPiece(62).getName());
         assertEquals("W", emptyBoard.getPiece(62).getAllegiance());
+    }
+
+    @Test
+    public void testCastling2() {
+        emptyBoard.addPiece(new Rook("W", 56));
+        assertTrue(emptyBoard.movePiece(60, 58)); // if this test fails, there is an issue with King class
+        assertEquals("R", emptyBoard.getPiece(59).getName());
+        assertEquals("W", emptyBoard.getPiece(59).getAllegiance());
+        assertEquals("K", emptyBoard.getPiece(58).getName());
+        assertEquals("W", emptyBoard.getPiece(58).getAllegiance());
+    }
+
+    @Test
+    public void testCastling3() {
+        emptyBoard.addPiece(new Rook("B", 7));
+        assertTrue(emptyBoard.movePiece(4, 6)); // if this test fails, there is an issue with King class
+        assertEquals("R", emptyBoard.getPiece(5).getName());
+        assertEquals("B", emptyBoard.getPiece(5).getAllegiance());
+        assertEquals("K", emptyBoard.getPiece(6).getName());
+        assertEquals("B", emptyBoard.getPiece(6).getAllegiance());
+    }
+
+    @Test
+    public void testCastling4() {
+        emptyBoard.addPiece(new Rook("B", 0));
+        assertTrue(emptyBoard.movePiece(4, 2)); // if this test fails, there is an issue with King class
+        assertEquals("R", emptyBoard.getPiece(3).getName());
+        assertEquals("B", emptyBoard.getPiece(3).getAllegiance());
+        assertEquals("K", emptyBoard.getPiece(2).getName());
+        assertEquals("B", emptyBoard.getPiece(2).getAllegiance());
+    }
+
+    @Test
+    public void testPromotion() {
+        emptyBoard.addPiece(new Pawn("W", 8));
+        assertTrue(emptyBoard.movePiece(8, 0));
+        assertTrue(emptyBoard.existsPiece(0));
+        assertEquals("Q", emptyBoard.getPiece(0).getName());
     }
 
     @Test
@@ -143,6 +187,18 @@ public class GameBoardTest {
         assertEquals("P", newBoard.getPiece(19).getName());
         assertEquals("W", newBoard.getPiece(19).getAllegiance());
         assertFalse(newBoard.existsPiece(27));
+    }
+    @Test
+    public void testEnPassant2() {
+        newBoard.movePiece(62, 45);
+        newBoard.movePiece(11, 27);
+        newBoard.movePiece(45, 62);
+        newBoard.movePiece(27, 35);
+        newBoard.movePiece(52, 36);
+        assertTrue(newBoard.movePiece(35, 44)); // if this test fails, there is an issue with Pawn class
+        assertEquals("P", newBoard.getPiece(44).getName());
+        assertEquals("B", newBoard.getPiece(44).getAllegiance());
+        assertFalse(newBoard.existsPiece(36));
     }
 
     // we don't need to test situations that forbid these moves since they should be accounted for in respective classes
@@ -220,7 +276,7 @@ public class GameBoardTest {
     }
 
     @Test
-    public void testCheckmate() {
+    public void testCheckmateW() {
         newBoard.movePiece(52, 36);
         newBoard.movePiece(13, 21);
         newBoard.movePiece(51, 35);
@@ -231,6 +287,17 @@ public class GameBoardTest {
         // 1. e4 f6 2. d4 g5 3. Qh5#
         assertTrue(newBoard.checkStatus());
         assertEquals("White Wins By Checkmate", newBoard.getStatus());
+    }
+
+    @Test
+    public void testCheckmateB() {
+        newBoard.movePiece(53, 45);
+        newBoard.movePiece(12, 28);
+        newBoard.movePiece(54, 38);
+        newBoard.movePiece(3, 39);
+        System.out.println(newBoard.getPiece(48).getLegalMoves(newBoard));
+        assertTrue(newBoard.checkStatus());
+        assertEquals("Black Wins By Checkmate", newBoard.getStatus());
     }
 
     @Test
@@ -274,8 +341,8 @@ public class GameBoardTest {
 
     @Test
     public void testKnightBishopGameContinues() {
-        emptyBoard.addPiece(new Knight("W", 1));
-        emptyBoard.addPiece(new Bishop("W", 56));
+        emptyBoard.addPiece(new Bishop("W", 1));
+        emptyBoard.addPiece(new Knight("W", 56));
         assertFalse(emptyBoard.checkStatus());
     }
 
@@ -304,6 +371,38 @@ public class GameBoardTest {
         assertEquals("P", newBoard.getPiece(51).getName());
         assertEquals("W", newBoard.getPiece(51).getAllegiance());
         assertNull(newBoard.getLastMove());
+    }
+
+    @Test
+    public void testUndoCapture1() {
+        // test both undo methods, as there is method overloading
+        newBoard.movePiece(51, 35);
+        newBoard.movePiece(12, 28);
+        Move temp = newBoard.getLastMove();
+        newBoard.movePiece(35, 28);
+        assertEquals(31, newBoard.getNumPieces());
+        newBoard.undo(temp);
+        assertTrue(newBoard.existsPiece(35));
+        assertEquals("P", newBoard.getPiece(35).getName());
+        assertEquals("W", newBoard.getPiece(35).getAllegiance());
+        assertEquals("P", newBoard.getPiece(28).getName());
+        assertEquals("B", newBoard.getPiece(28).getAllegiance());
+        assertEquals(32, newBoard.getNumPieces());
+    }
+
+    @Test
+    public void testUndoCapture2() {
+        newBoard.movePiece(51, 35);
+        newBoard.movePiece(12, 28);
+        newBoard.movePiece(35, 28);
+        assertEquals(31, newBoard.getNumPieces());
+        newBoard.undo();
+        assertTrue(newBoard.existsPiece(35));
+        assertEquals("P", newBoard.getPiece(35).getName());
+        assertEquals("W", newBoard.getPiece(35).getAllegiance());
+        assertEquals("P", newBoard.getPiece(28).getName());
+        assertEquals("B", newBoard.getPiece(28).getAllegiance());
+        assertEquals(32, newBoard.getNumPieces());
     }
 
     @Test

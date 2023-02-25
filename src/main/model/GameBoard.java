@@ -63,7 +63,7 @@ public class GameBoard {
         Piece clone = clonePiece(moving);
         Piece captured = updateBoard(moving, end);
 
-        moving.setPosition(end); // this won't do anything if pawn promoted as 'moving' is no longer on board
+        moving.setPosition(end);
         if (captured != null) {
             pieces.remove(captured);
             lastMove = new Move(clone, start, end, isCheck(), captured);
@@ -97,7 +97,9 @@ public class GameBoard {
         // whether special moves are legal is determined by the piece class, this method only updates the board
         if (moving.getName().equals("P") && (end <= 7 || end >= 56)) {  // promotion
             pieces.remove(moving);
+            Piece captured = getPiece(end);
             pieces.add(new Queen(moving.getAllegiance(), end));
+            return captured;
             // assume that all pawns promote into queens (cause idk how to make otherwise)
 
         } else if (moving.getName().equals("K") && !moving.isMoved()) { // castling
@@ -105,18 +107,16 @@ public class GameBoard {
                 getPiece(63).setPosition(61);
             } else if (end == 58 && existsPiece(56)) {
                 getPiece(56).setPosition(59);
-            } else if (end == 2 && existsPiece(7)) {
-                getPiece(7).setPosition(5);
-            } else if (end == 6 && existsPiece(0)) {
+            } else if (end == 2 && existsPiece(0)) {
                 getPiece(0).setPosition(3);
+            } else if (end == 6 && existsPiece(7)) {
+                getPiece(7).setPosition(5);
             }
 
         } else if (lastMove != null && lastMove.getPiece().getName().equals("P") && moving.getName().equals("P")) {
             if (lastMove.getEnd() == end + 8 && moving.getAllegiance().equals("W")) { // en passant for white
-                moving.setPosition(end);
                 return getPiece(end + 8);
             } else if (lastMove.getEnd() == end - 8 && moving.getAllegiance().equals("B")) { // en passant for black
-                moving.setPosition(end);
                 return getPiece(end - 8);
             }
         }
