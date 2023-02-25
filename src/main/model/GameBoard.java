@@ -43,8 +43,7 @@ public class GameBoard {
         return false;
     }
 
-    // REQUIRES: there must be a piece on given coordinates
-    // EFFECTS: returns the piece object on specified square
+    // EFFECTS: returns the piece object on specified square, or null if piece does not exist
     public Piece getPiece(int pos) {
         for (Piece p : pieces) {
             if (p.getPosition() == pos) {
@@ -108,7 +107,7 @@ public class GameBoard {
             Piece captured = getPiece(end);
             pieces.add(new Queen(moving.getAllegiance(), end));
             return captured;
-            // assume that all pawns promote into queens (cause idk how to make otherwise)
+            // assume that all pawns promote into queens
 
         } else if (moving.getName().equals("K") && !moving.isMoved()) { // castling
             if (end == 62 && existsPiece(63)) {
@@ -155,7 +154,7 @@ public class GameBoard {
         }
     }
 
-    // The next two methods will be used in public visibility only for special cases or for testing
+    // The next two methods will be used in public visibility only for testing
 
     // REQUIRES: piece is not on a square which is already occupied; piece is not a king, or pawn on first or last ranks
     // MODIFIES: this
@@ -164,20 +163,20 @@ public class GameBoard {
         pieces.add(piece);
     }
 
-    // REQUIRES: there exists a piece on the board at the given position; and that piece is not a king
+    // REQUIRES: the piece at the coordinates is not a king
     // MODIFIES: this
-    // EFFECTS: removes a piece from the board
+    // EFFECTS: removes a piece from the board; if piece is king, method will work, but chess can't be played without
+    // a king.
     public void removePiece(int position) {
         pieces.removeIf(p -> p.getPosition() == position);
     }
 
-    // REQUIRES: move being made is a valid move, if no piece on start square, method will throw NullPointerException
-    // unfortunately there isn't much that can be done to handle this exception here.
+    // REQUIRES: there must be a piece at start coordinates
     // EFFECTS: returns true if the side moving is in check after move, i.e. if opponent is able to capture
-    // king if it were to be making the move; exception will only be thrown if there is no piece found at start
-    public boolean testCheck(int start, int end) throws NullPointerException {
+    // king if it were to be making the move; exception will be thrown if there is no piece found at start
+    public boolean testCheck(int start, int end) {
         ArrayList<Piece> original = tempBoard();
-        Piece moving = getPiece(start);
+        Piece moving = getPiece(start); // unfortunately there is nothing that can be done to handle this exception
         Piece captured = updateBoard(moving, end);
         moving.setPosition(end);
         if (captured != null) {
@@ -188,7 +187,8 @@ public class GameBoard {
         return val;
     }
 
-    // creates the move on game board with all new pieces, but saves previous state in temp board
+    // EFFECTS: creates the move on game board with cloned pieces, but saves previous state in return value
+    // i.e. this method replaces board with a deep clone of the board
     private ArrayList<Piece> tempBoard() {
         ArrayList<Piece> original = new ArrayList<>(this.pieces);
         this.pieces = new ArrayList<>();
@@ -241,11 +241,9 @@ public class GameBoard {
     }
 
     @SuppressWarnings("methodlength")
-    // To whomever is marking this; I'm sorry that I did not check with a TA in advance before using this annotation,
-    // however, there are no more available office hours that I can attend during this reading week before phase 1 is
-    // due. My method is only 28 lines long, and I included comments to help make the code less confusing, so it is more
+    // My method is only 28 lines long, and I included comments to help make the code less confusing, so it is more
     // clear why I needed the extra 3 lines. I believe that there is no way of dividing up this method further without
-    // making the code twice as inefficient (2 checks; one for each side), or more confusing to read.
+    // making the code twice as inefficient (such has having 2 methods, one for each side), or more confusing to read.
     // I added an EFFECTS clause to better explain what this private method is designed to do.
 
     // REQUIRES: nothing
@@ -288,8 +286,7 @@ public class GameBoard {
         return true;  // it is insufficient material if the method didn't return false earlier.
     }
 
-    // REQUIRES: Game is over, and checkStatus was called
-    // EFFECTS: returns a string that represents which side won, or if it was a tie
+    // EFFECTS: returns a string that represents which side won, or if it was a tie, or null if not applicable
     public String getStatus() {
         return status;
     }
@@ -302,7 +299,7 @@ public class GameBoard {
         return turn;
     }
 
-    // REQUIRES: board is not already set up
+    // REQUIRES: board is not already set up, except for the kings, which are always on the board
     // MODIFIES: this
     // EFFECTS: sets each piece on the board to starting position
     private void setup() {
@@ -330,9 +327,6 @@ public class GameBoard {
         pieces.add(new Queen("B", 3));
     }
 
-    // REQUIRES: kings are not already on the board
-    // MODIFIES: this
-    // EFFECTS: adds two kings to starting squares
     private void addKings() {
         pieces.add(new King("W", 60));
         pieces.add(new King("B", 4));
@@ -342,7 +336,7 @@ public class GameBoard {
         return lastMove;
     }
 
-    // REQUIRES: newPreviousMove is the correct move that was played prior to previous move (i.e. the second last move)
+    // REQUIRES: newPreviousMove is the correct move that was played prior to previous move (the second-latest move)
     // as this is not stored in GameBoard.
     // MODIFIES: this
     // EFFECTS: if no moves have been made, this method does nothing; else the board reverts to prior state before last
