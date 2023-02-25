@@ -25,6 +25,15 @@ public class GameBoard {
         lastMove = null;
     }
 
+    // EFFECTS: creates a board with pieces on starting positions, with white to move, and no moves played yet.
+    public GameBoard() {
+        pieces = new ArrayList<>();
+        setup();
+        turn = "W";
+        status = null;
+        lastMove = null;
+    }
+
     // EFFECTS: returns true if there exists a piece with the coordinates on the board
     public boolean existsPiece(int pos) {
         for (Piece p : pieces) {
