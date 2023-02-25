@@ -70,8 +70,6 @@ public class MoveList {
         return piece + capture + fromCoordinate(move.getEnd()) + check;
     }
 
-
-    // todo tests for these methods
     // EFFECTS: converts a coordinate into algebraic notation
     public static String fromCoordinate(int square) {
         return  files.get(square % 8) + (8 - square / 8);
@@ -88,7 +86,7 @@ public class MoveList {
         int file = files.indexOf(square.substring(0, 1));
         int rank = square.charAt(1) - '0';
 
-        if (rank > 8) {  // note that rank cannot be < 0 as it was a char
+        if (rank > 8 || rank < 1) {
             throw new NotValidSquareException();
         }
 

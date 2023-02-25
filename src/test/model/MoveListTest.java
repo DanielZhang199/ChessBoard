@@ -1,5 +1,6 @@
 package model;
 
+import model.exceptions.NotValidSquareException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -96,4 +97,39 @@ public class MoveListTest {
     }
     // while it may be fundamentally different to undo a capture vs non-capture on an actual game board, the process for
     // MoveList is pretty much the exact same, so there doesn't need to be another test for undo captures.
+
+    // Static method tests
+    @Test
+    public void testFromCoordinate() {
+        assertEquals("c3", MoveList.fromCoordinate(42));
+        assertEquals("h8", MoveList.fromCoordinate(7));
+        assertEquals("g5", MoveList.fromCoordinate(30));
+    }
+
+    @Test
+    public void testToCoordinate() {
+        try {
+            assertEquals(42, MoveList.toCoordinate("c3"));
+            assertEquals(7, MoveList.toCoordinate("h8"));
+            assertEquals(30, MoveList.toCoordinate("g5"));
+        } catch (NotValidSquareException e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void testToCoordinateExceptions() {
+        assertThrows(NotValidSquareException.class, () -> {
+            MoveList.toCoordinate("b12");
+        });
+        assertThrows(NotValidSquareException.class, () -> {
+            MoveList.toCoordinate("6e");
+        });
+        assertThrows(NotValidSquareException.class, () -> {
+            MoveList.toCoordinate("i3");
+        });
+        assertThrows(NotValidSquareException.class, () -> {
+            MoveList.toCoordinate("d0");
+        });
+    }
 }

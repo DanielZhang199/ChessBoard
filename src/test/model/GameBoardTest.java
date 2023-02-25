@@ -17,6 +17,7 @@ public class GameBoardTest {
 
     @Test
     public void testConstructorState() {
+        newBoard = new GameBoard();
         assertEquals("W", newBoard.getTurn());
         assertNull(newBoard.getStatus());
 
