@@ -44,9 +44,9 @@ public class Pawn extends Piece {
     private void addEnPassantW(GameBoard board, Set<Integer> result) {
         Move m = board.getLastMove();
         if (m != null && m.getPiece().getName().equals("P")) {
-            if (m.getStart() == position - 17 && m.getEnd() == position - 1) {
+            if (m.getStart() == position - 17) {
                 result.add(position - 9);
-            } else if (m.getStart() == position - 15 && m.getEnd() == position + 1) {
+            } else if (m.getStart() == position - 15) {
                 result.add(position - 7);
             }
         }
@@ -75,9 +75,9 @@ public class Pawn extends Piece {
     private void addEnPassantB(GameBoard board, Set<Integer> result) {
         Move m = board.getLastMove();
         if (m != null && m.getPiece().getName().equals("P")) {
-            if (m.getStart() == position + 17 && m.getEnd() == position + 1) {
+            if (m.getStart() == position + 17) {
                 result.add(position + 9);
-            } else if (m.getStart() == position + 15 && m.getEnd() == position - 1) {
+            } else if (m.getStart() == position + 15) {
                 result.add(position + 7);
             }
         }
