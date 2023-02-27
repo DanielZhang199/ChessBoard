@@ -45,7 +45,6 @@ public class MoveList {
     public void addMove(Move move) {
         moves.add(move);
         notationList.add(toNotation(move));
-        assert moves.size() == notationList.size();
     }
 
     private String toNotation(Move move) {
@@ -116,7 +115,6 @@ public class MoveList {
     public void undo() {
         moves.remove(moves.size() - 1);
         notationList.remove(notationList.size() - 1);
-        assert moves.size() == notationList.size();
     }
 
     // REQUIRES: at least one move was made

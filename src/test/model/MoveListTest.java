@@ -37,13 +37,33 @@ public class MoveListTest {
     }
 
     @Test
-    public void testCastleBothSides() {
+    public void testCastleBothSides1() {
         testList.addMove(new Move(new King("W", 60), 60, 62, false));
         testList.addMove(new Move(new King("B", 4), 4, 2, false));
         String firstMove = testList.getNotationList().get(0);
         String secondMove = testList.getNotationList().get(1);
         assertEquals("O-O", firstMove);
         assertEquals("O-O-O", secondMove);
+    }
+
+    @Test
+    public void testCastleBothSides2() {
+        testList.addMove(new Move(new King("W", 60), 60, 58, false));
+        testList.addMove(new Move(new King("B", 4), 4, 6, false));
+        String firstMove = testList.getNotationList().get(0);
+        String secondMove = testList.getNotationList().get(1);
+        assertEquals("O-O-O", firstMove);
+        assertEquals("O-O", secondMove);
+    }
+
+    @Test
+    public void testNotCastle() {
+        testList.addMove(new Move(new King("W", 60), 60, 59, false));
+        testList.addMove(new Move(new King("B", 4), 4, 5, false));
+        String firstMove = testList.getNotationList().get(0);
+        String secondMove = testList.getNotationList().get(1);
+        assertEquals("Kd1", firstMove);
+        assertEquals("Kf8", secondMove);
     }
 
     @Test
@@ -114,5 +134,7 @@ public class MoveListTest {
         assertThrows(NotValidSquareException.class, () -> MoveList.toCoordinate("6e"));
         assertThrows(NotValidSquareException.class, () -> MoveList.toCoordinate("i3"));
         assertThrows(NotValidSquareException.class, () -> MoveList.toCoordinate("d0"));
+        assertThrows(NotValidSquareException.class, () -> MoveList.toCoordinate("d9"));
+        assertThrows(NotValidSquareException.class, () -> MoveList.toCoordinate("aa"));
     }
 }
