@@ -76,7 +76,7 @@ public class KingTest {
     }
 
     @Test
-    public void testNoCastleWhenKingMoved() {
+    public void testNoCastleWhenKingMoved1() {
         testKingW.setPosition(60);
         board.addPiece(new Rook("W", 63));
         Set<Integer> moveList = testKingW.getLegalMoves(board);
@@ -85,13 +85,92 @@ public class KingTest {
     }
 
     @Test
-    public void testNoCastleWhenRookMoved() {
+    public void testNoCastleWhenRookMoved1() {
         board.addPiece(new Rook("W", 55));
         board.movePiece(55, 63);
         board.movePiece(4, 3);
         Set<Integer> moveList = testKingW.getLegalMoves(board);
         assertEquals(5, moveList.size());
         assertFalse(moveList.contains(62));
+    }
+
+    @Test
+    public void testNoCastleWhenKingMoved2() {
+        testKingW.setPosition(60);
+        board.addPiece(new Rook("W", 56));
+        Set<Integer> moveList = testKingW.getLegalMoves(board);
+        assertEquals(5, moveList.size());
+        assertFalse(moveList.contains(58));
+    }
+
+    @Test
+    public void testNoCastleWhenRookMoved2() {
+        board.addPiece(new Rook("W", 48));
+        board.movePiece(48, 56);
+        board.movePiece(4, 3);
+        Set<Integer> moveList = testKingW.getLegalMoves(board);
+        assertEquals(5, moveList.size());
+        assertFalse(moveList.contains(58));
+    }
+
+    @Test
+    public void testNoCastleWhenKingMovedB1() {
+        testKingB.setPosition(4);
+        board.addPiece(new Rook("B", 7));
+        board.movePiece(60, 59);
+        Set<Integer> moveList = testKingB.getLegalMoves(board);
+        assertEquals(5, moveList.size());
+        assertFalse(moveList.contains(6));
+    }
+
+    @Test
+    public void testNoCastleWhenRookMovedB1() {
+        board.addPiece(new Rook("B", 0));
+        board.movePiece(60, 59);
+        board.getPiece(0).setPosition(0);
+        Set<Integer> moveList = testKingB.getLegalMoves(board);
+        assertEquals(5, moveList.size());
+        assertFalse(moveList.contains(2));
+    }
+
+    @Test
+    public void testNoCastleWhenKingMovedB2() {
+        testKingB.setPosition(4);
+        board.addPiece(new Rook("B", 0));
+        board.movePiece(60, 59);
+        Set<Integer> moveList = testKingB.getLegalMoves(board);
+        assertEquals(5, moveList.size());
+        assertFalse(moveList.contains(2));
+    }
+
+    @Test
+    public void testNoCastleWhenRookMovedB2() {
+        board.addPiece(new Rook("B", 7));
+        board.movePiece(60, 59);
+        board.getPiece(7).setPosition(7);
+        Set<Integer> moveList = testKingB.getLegalMoves(board);
+        assertEquals(5, moveList.size());
+        assertFalse(moveList.contains(6));
+    }
+
+    @Test
+    public void testNoCastleWhenChecked1() {
+        board.addPiece(new Rook("B", 0));
+        board.addPiece(new Rook("W", 59));
+        board.movePiece(60, 61);
+        Set<Integer> moveList = testKingB.getLegalMoves(board);
+        assertEquals(3, moveList.size());
+        assertFalse(moveList.contains(2));
+    }
+
+    @Test
+    public void testNoCastleWhenChecked2() {
+        board.addPiece(new Rook("B", 7));
+        board.addPiece(new Rook("W", 61));
+        board.movePiece(60, 59);
+        Set<Integer> moveList = testKingB.getLegalMoves(board);
+        assertEquals(3, moveList.size());
+        assertFalse(moveList.contains(6));
     }
 
     // test that king can't capture own pieces

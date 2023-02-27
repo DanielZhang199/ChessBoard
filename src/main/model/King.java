@@ -33,7 +33,7 @@ public class King extends Piece {
                 } else if (board.existsPiece(56) && !board.getPiece(56).isMoved() && result.contains(59)) {
                     result.add(58);
                 }
-            } else if (allegiance.equals("B")) {
+            } else {
                 if (board.existsPiece(7) && !board.getPiece(7).isMoved() && result.contains(5)) {
                     result.add(6);
                 } else if (board.existsPiece(0) && !board.getPiece(0).isMoved() && result.contains(3)) {
