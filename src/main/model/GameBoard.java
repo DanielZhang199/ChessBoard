@@ -1,5 +1,7 @@
 package model;
 
+import ui.exceptions.PieceNotExistException;
+
 import java.util.ArrayList;
 
 // represents the current game state with all pieces and their locations
@@ -82,7 +84,7 @@ public class GameBoard {
     }
 
     public boolean isCheck() {
-        int kingSquare = 4;
+        int kingSquare = 63;
         for (Piece p : pieces) {
             if (p.getName().equals("K") && p.getAllegiance().equals(turn)) {
                 kingSquare = p.getPosition();
@@ -110,20 +112,21 @@ public class GameBoard {
             // assume that all pawns promote into queens
 
         } else if (moving.getName().equals("K") && !moving.isMoved()) { // castling
-            if (end == 62 && existsPiece(63)) {
+            if (end == 62) {
+                // we trust that there is already a rook on 63, since otherwise this would not be legal end move
                 getPiece(63).setPosition(61);
-            } else if (end == 58 && existsPiece(56)) {
+            } else if (end == 58) {
                 getPiece(56).setPosition(59);
-            } else if (end == 2 && existsPiece(0)) {
+            } else if (end == 2) {
                 getPiece(0).setPosition(3);
-            } else if (end == 6 && existsPiece(7)) {
+            } else if (end == 6) {
                 getPiece(7).setPosition(5);
             }
 
         } else if (lastMove != null && lastMove.getPiece().getName().equals("P") && moving.getName().equals("P")) {
             if (lastMove.getEnd() == end + 8 && moving.getAllegiance().equals("W")) { // en passant for white
                 return getPiece(end + 8);
-            } else if (lastMove.getEnd() == end - 8 && moving.getAllegiance().equals("B")) { // en passant for black
+            } else if (lastMove.getEnd() == end - 8) { // en passant for black
                 return getPiece(end - 8);
             }
         }
@@ -139,19 +142,24 @@ public class GameBoard {
     }
 
     private Piece clonePiece(Piece p) {
+        Piece clone;
         if (p.getName().equals("P")) {
-            return new Pawn(p.getAllegiance(), p.getPosition());
+            clone = new Pawn(p.getAllegiance(), p.getPosition());
         } else if (p.getName().equals("N")) {
-            return new Knight(p.getAllegiance(), p.getPosition());
+            clone = new Knight(p.getAllegiance(), p.getPosition());
         } else if (p.getName().equals("B")) {
-            return new Bishop(p.getAllegiance(), p.getPosition());
+            clone = new Bishop(p.getAllegiance(), p.getPosition());
         } else if (p.getName().equals("R")) {
-            return new Rook(p.getAllegiance(), p.getPosition());
+            clone = new Rook(p.getAllegiance(), p.getPosition());
         } else if (p.getName().equals("Q")) {
-            return new Queen(p.getAllegiance(), p.getPosition());
+            clone = new Queen(p.getAllegiance(), p.getPosition());
         } else {
-            return new King(p.getAllegiance(), p.getPosition());
+            clone = new King(p.getAllegiance(), p.getPosition());
         }
+        if (p.isMoved()) {
+            clone.setPosition(p.getPosition());
+        }
+        return clone;
     }
 
     // The next two methods will be used in public visibility only for testing

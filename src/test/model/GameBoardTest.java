@@ -171,12 +171,39 @@ public class GameBoardTest {
     }
 
     @Test
+    public void testNoCastling() {
+        emptyBoard.addPiece(new Rook("W", 62));
+        emptyBoard.addPiece(new Rook("W", 57));
+        assertFalse(emptyBoard.movePiece(60, 62));
+        assertFalse(emptyBoard.movePiece(60, 58));
+    }
+
+    @Test
     public void testPromotion() {
         emptyBoard.addPiece(new Pawn("W", 8));
         assertTrue(emptyBoard.movePiece(8, 0));
         assertTrue(emptyBoard.existsPiece(0));
         assertEquals("Q", emptyBoard.getPiece(0).getName());
     }
+
+    @Test
+    public void testPromotionBlack() {
+        emptyBoard.addPiece(new Pawn("B", 51));
+        emptyBoard.movePiece(60, 61);
+        assertTrue(emptyBoard.movePiece(51, 59));
+        assertTrue(emptyBoard.existsPiece(59));
+        assertEquals("Q", emptyBoard.getPiece(59).getName());
+    }
+
+    @Test
+    public void testNonPawnDoesNotPromote() {
+        emptyBoard.addPiece(new Rook("B", 51));
+        emptyBoard.movePiece(60, 61);
+        assertTrue(emptyBoard.movePiece(51, 59));
+        assertTrue(emptyBoard.existsPiece(59));
+        assertEquals("R", emptyBoard.getPiece(59).getName());
+    }
+
 
     @Test
     public void testEnPassant() {
@@ -200,6 +227,19 @@ public class GameBoardTest {
         assertEquals("P", newBoard.getPiece(44).getName());
         assertEquals("B", newBoard.getPiece(44).getAllegiance());
         assertFalse(newBoard.existsPiece(36));
+    }
+
+    @Test
+    public void testNotEnPassant2() {
+        newBoard.movePiece(62, 45);
+        newBoard.movePiece(11, 27);
+        newBoard.movePiece(45, 62);
+        newBoard.movePiece(27, 35);
+        newBoard.movePiece(52, 36);
+        assertTrue(newBoard.movePiece(35, 43)); // if this test fails, there is an issue with Pawn class
+        assertEquals("P", newBoard.getPiece(43).getName());
+        assertEquals("B", newBoard.getPiece(43).getAllegiance());
+        assertTrue(newBoard.existsPiece(36));
     }
 
     // we don't need to test situations that forbid these moves since they should be accounted for in respective classes
@@ -277,6 +317,19 @@ public class GameBoardTest {
     }
 
     @Test
+    public void defaultKingSquare() {  // for code coverage, if testCheck can't find kings, default position is on 63
+        emptyBoard.addPiece(new Rook("B", 7));
+        emptyBoard.addPiece(new Rook("W", 53));
+        emptyBoard.removePiece(60);
+        emptyBoard.removePiece(4);
+        assertTrue(emptyBoard.testCheck(53, 61));
+        assertFalse(emptyBoard.testCheck(53, 55));
+        emptyBoard.movePiece(53, 55);
+        assertTrue(emptyBoard.testCheck(7, 15));
+        assertFalse(emptyBoard.testCheck(7, 55));
+    }
+
+    @Test
     public void testCheckmateW() {
         newBoard.movePiece(52, 36);
         newBoard.movePiece(13, 21);
@@ -296,7 +349,6 @@ public class GameBoardTest {
         newBoard.movePiece(12, 28);
         newBoard.movePiece(54, 38);
         newBoard.movePiece(3, 39);
-        System.out.println(newBoard.getPiece(48).getLegalMoves(newBoard));
         assertTrue(newBoard.checkStatus());
         assertEquals("Black Wins By Checkmate", newBoard.getStatus());
     }
@@ -318,6 +370,7 @@ public class GameBoardTest {
         assertFalse(emptyBoard.checkStatus());  // white is in check, but game is not over
         emptyBoard.movePiece(60, 61);
         assertFalse(emptyBoard.checkStatus());
+        System.out.print(emptyBoard.getPiece(61).isMoved());
         emptyBoard.movePiece(7, 6);
         assertTrue(emptyBoard.checkStatus());
         assertEquals("Stalemate", emptyBoard.getStatus());
@@ -360,6 +413,24 @@ public class GameBoardTest {
         emptyBoard.addPiece(new Knight("B", 1));
         emptyBoard.addPiece(new Knight("B", 2));
         emptyBoard.addPiece(new Knight("B", 3));
+        assertFalse(emptyBoard.checkStatus());
+    }
+
+    @Test
+    public void testQueenGameContinues() {
+        emptyBoard.addPiece(new Rook("B", 1));
+        assertFalse(emptyBoard.checkStatus());
+    }
+
+    @Test
+    public void testRookGameContinues() {
+        emptyBoard.addPiece(new Queen("W", 1));
+        assertFalse(emptyBoard.checkStatus());
+    }
+
+    @Test
+    public void testPawnGameContinues() {
+        emptyBoard.addPiece(new Pawn("B", 10));
         assertFalse(emptyBoard.checkStatus());
     }
 
@@ -418,6 +489,17 @@ public class GameBoardTest {
         assertEquals("P", newBoard.getPiece(12).getName());
         assertEquals("B", newBoard.getPiece(12).getAllegiance());
         newBoard.undo();  // no savedMove as there was no earlier moves made
+        assertFalse(newBoard.existsPiece(36));
+        assertEquals("P", newBoard.getPiece(52).getName());
+        assertEquals("W", newBoard.getPiece(52).getAllegiance());
+        newBoard.undo();
+
+        // nothing will happen so there's nothing to test really
+        assertFalse(newBoard.existsPiece(36));
+        assertEquals("P", newBoard.getPiece(52).getName());
+        assertEquals("W", newBoard.getPiece(52).getAllegiance());
+
+        newBoard.undo(savedMove);  // don't do this; this is for coverage
         assertFalse(newBoard.existsPiece(36));
         assertEquals("P", newBoard.getPiece(52).getName());
         assertEquals("W", newBoard.getPiece(52).getAllegiance());
