@@ -30,7 +30,11 @@ challenges to not feel too trivial.
 4. As a user, I want to be able to see previous moves, preferably both graphically and through chess notation. 
 *(This requires adding an X to a Y)*
 5. As a user, I want the game to automatically detect checkmate or stalemate positions.
-
+#### Phase 2 Stories:
+6. As a user, I want the choice to save the board when exiting the application.
+   1. Saving and loading should not be possible any other time, as jumping from one position to another in chess
+   can lead to a lot of confusion.
+7. As a user, I want to be given the option to load the previously saved board from a file, if I so choose.
 
 ## Board Grid
 ![8x8 grid from 0-63](grid.png "Putting this here for future reference")
