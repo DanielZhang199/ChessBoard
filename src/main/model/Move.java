@@ -1,8 +1,11 @@
 package model;
 
+import org.json.JSONObject;
+import persistence.Savable;
+
 // immutable object designed to save info on previous moves
 // since Move is immutable, it can be passed around without needing to be copied
-public class Move {
+public class Move implements Savable {
     private final Piece piece;
     private final Piece captured; // this is optional
     private final int start;
@@ -45,5 +48,20 @@ public class Move {
 
     public boolean isCheck() {
         return check;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject result = new JSONObject();
+        result.put("piece", piece.toJson());
+        if (captured == null) {
+            result.put("captured", JSONObject.NULL);
+        } else {
+            result.put("captured", captured.toJson());
+        }
+        result.put("start", start);
+        result.put("end", end);
+        result.put("check", check);
+        return result;
     }
 }

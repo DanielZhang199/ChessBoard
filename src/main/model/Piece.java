@@ -1,12 +1,15 @@
 package model;
 
+import org.json.JSONObject;
+import persistence.Savable;
+
 import java.util.HashSet;
 import java.util.Set;
 
 // Common supertype for all pieces
 // For all methods here that take GameBoard as a parameter, and in subtypes, REQUIRES: board is in legal position is
 // implied to always be present.
-public abstract class Piece {
+public abstract class Piece implements Savable {
     protected int position;
     protected String allegiance;  // "B" for black, "W" for white
     protected boolean moved;  // whether the piece has moved
@@ -125,6 +128,16 @@ public abstract class Piece {
         result.addAll(scanUp(this.position, 1, this.position + 7 - this.position % 8, b, false));
         result.addAll(scanDown(this.position, 8, 0, b, false));
         result.addAll(scanUp(this.position, 8, 63, b, false));
+        return result;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject result = new JSONObject();
+        result.put("position", position);
+        result.put("allegiance", allegiance);
+        result.put("moved", moved);
+        result.put("type", this.getName());
         return result;
     }
 }

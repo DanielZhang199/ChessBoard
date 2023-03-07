@@ -1,13 +1,16 @@
 package model;
 
 import model.exceptions.NotValidSquareException;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import persistence.Savable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 // class for list of moves in computer and human-readable notation
 // therefore can also translate between board coordinates and algebraic notation
-public class MoveList {
+public class MoveList implements Savable {
     // INVARIANT: both arrays have same .size()
     private final ArrayList<Move> moves; // list of moves for computer
     private final ArrayList<String> notationList; // list of moves for human players to see
@@ -21,11 +24,6 @@ public class MoveList {
     public MoveList() {
         moves = new ArrayList<>();
         notationList = new ArrayList<>();
-    }
-
-    // EFFECTS: copies and returns a move list
-    public ArrayList<Move> getMoves() {
-        return new ArrayList<>(moves);
     }
 
     // EFFECTS: returns the size of arrays
@@ -125,5 +123,21 @@ public class MoveList {
     // EFFECTS: returns the last move in array
     public Move getPreviousMove() {
         return moves.get(moves.size() - 1);
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject result = new JSONObject();
+        result.put("notationList", new JSONArray(this.notationList));
+        result.put("moves", movesToJson());
+        return result;
+    }
+
+    private JSONArray movesToJson() {
+        JSONArray result = new JSONArray();
+        for (Move m : moves) {
+            result.put(m.toJson());
+        }
+        return result;
     }
 }

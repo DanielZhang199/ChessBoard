@@ -15,7 +15,6 @@ public class MoveListTest {
 
     @Test
     public void testConstructor() {
-        assertEquals(0, testList.getMoves().size());
         assertEquals(0, testList.getNotationList().size());
         assertEquals(0, testList.getSize());
     }
@@ -26,7 +25,7 @@ public class MoveListTest {
         testList.addMove(new Move(testPiece, 52, 36, false));
         assertEquals(1, testList.getSize());
         assertEquals("e4", testList.getNotationList().get(0));
-        Move firstMove = testList.getMoves().get(0);
+        Move firstMove = testList.getPreviousMove();
         assertEquals(52, firstMove.getStart());
         assertEquals(36, firstMove.getEnd());
         assertEquals(testPiece, firstMove.getPiece());  // note testPiece is a copy of piece on board
@@ -103,7 +102,6 @@ public class MoveListTest {
         testList.addMove(new Move(testPiece, 52, 36, false));
         assertEquals(1, testList.getSize());
         testList.undo();
-        assertEquals(0, testList.getMoves().size());
         assertEquals(0, testList.getSize());
     }
     // while it may be fundamentally different to undo a capture vs non-capture on an actual game board, the process for

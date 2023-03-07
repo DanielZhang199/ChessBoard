@@ -62,7 +62,7 @@ public class ChessGame {
 
     // EFFECTS: displays the turn and a console representation of the board to the console
     private void displayInfo() {
-        int turn = moves.getMoves().size();
+        int turn = moves.getSize();
         if (turn % 2 == 0) {
             System.out.println("Turn " + (turn / 2 + 1) + ", White to Move:");
         } else {
