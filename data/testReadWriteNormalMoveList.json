@@ -1,0 +1,1 @@
+{"notationList":["e4","e5+"],"moves":[{"piece":{"moved":false,"allegiance":"W","position":52,"type":"P"},"captured":null,"start":52,"end":36,"check":false},{"piece":{"moved":false,"allegiance":"B","position":12,"type":"P"},"captured":null,"start":12,"end":28,"check":true}]}
