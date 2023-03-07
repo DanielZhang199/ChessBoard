@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 // Common supertype for all pieces
+// For all methods here that take GameBoard as a parameter, and in subtypes, REQUIRES: board is in legal position is
+// implied to always be present.
 public abstract class Piece {
     protected int position;
     protected String allegiance;  // "B" for black, "W" for white
@@ -47,7 +49,7 @@ public abstract class Piece {
     // into check if it were their turn.
     public abstract Set<Integer> getMoves(GameBoard b);
 
-    // EFFECTS: calls getMoves, and filters out illegal moves (those that would result in staying in check)
+    // EFFECTS: returns the set of all legal moves that this piece can make.
     public Set<Integer> getLegalMoves(GameBoard b) {
         Set<Integer> moves = getMoves(b);
         Set<Integer> illegalMoves = new HashSet<>();
@@ -60,6 +62,7 @@ public abstract class Piece {
         return moves;
     }
 
+    // EFFECTS: abstract method that scans for pieces and stops in specified steps and starting square, until end square
     private Set<Integer> scanUp(int start, int step, int stop, GameBoard b, boolean diagonal) {
         // abstract function for scanning lines in positive direction
         Set<Integer> result = new HashSet<>();
@@ -80,13 +83,16 @@ public abstract class Piece {
         return result;
     }
 
+    // EFFECTS: abstract method that scans for pieces and stops in specified steps and starting square, until end square
+    // works exactly the same as the previous method, just decrements by step, and tests for geq instead of leq to stop
+    // the loop
     private Set<Integer> scanDown(int start, int step, int stop, GameBoard b, boolean diagonal) {
         // abstract function for scanning lines in negative direction
         Set<Integer> result = new HashSet<>();
         start -= step;
         for (int i = start; i >= stop; i -= step) {
             if (b.existsPiece(i)) {
-                if (!(b.getPiece(i).getAllegiance().equals(getAllegiance()))) {
+                if (!(b.getPiece(i).getAllegiance().equals(this.allegiance))) {
                     result.add(i);
                 }
                 break;
@@ -100,6 +106,7 @@ public abstract class Piece {
         return result;
     }
 
+    // EFFECTS: gets moves for the 4 diagonal directions and returns as a set
     protected Set<Integer> getMovesDiagonal(GameBoard b) {
         Set<Integer> result;
         // iterate through each diagonal (basically up/down and left/right one square each)
@@ -110,6 +117,7 @@ public abstract class Piece {
         return result;
     }
 
+    // EFFECTS: gets moves for the 4 orthogonal directions and returns as a set
     protected Set<Integer> getMovesOrthogonal(GameBoard b) {
         Set<Integer> result;
         // iterate through each row/column

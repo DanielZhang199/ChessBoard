@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+// Class for creating king object
 public class King extends Piece {
 
     public King(String allegiance, int position) {

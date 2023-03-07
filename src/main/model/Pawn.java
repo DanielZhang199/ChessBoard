@@ -3,13 +3,15 @@ package model;
 import java.util.HashSet;
 import java.util.Set;
 
+
+// pawn object
 public class Pawn extends Piece {
 
     public Pawn(String allegiance, int position) {
         super(allegiance, position);
     }
 
-    // EFFECTS: returns list of all squares pawn can move to; note that this includes moves that would leave
+    // EFFECTS: returns set of all squares pawn can move to; note that this includes moves that would leave
     // the pawn's king in check
     public Set<Integer> getMoves(GameBoard board) {
         if (allegiance.equals("W")) {
@@ -19,6 +21,7 @@ public class Pawn extends Piece {
         }
     }
 
+    // EFFECTS: gets the set of all squares pawn can move to going up the board
     private Set<Integer> getMovesWhite(GameBoard board) {
         Set<Integer> result = new HashSet<>();
         if (position % 8 != 7 && board.existsPiece(position - 7)
@@ -41,6 +44,8 @@ public class Pawn extends Piece {
         return result;
     }
 
+    // MODIFIES: result
+    // EFFECTS: if en passant is possible (for white), adds the move to the inputted set.
     private void addEnPassantW(GameBoard board, Set<Integer> result) {
         Move m = board.getLastMove();
         if (m != null && m.getPiece().getName().equals("P")) {
@@ -52,6 +57,7 @@ public class Pawn extends Piece {
         }
     }
 
+    // EFFECTS: gets the set of all squares pawn can move to going down the board
     private Set<Integer> getMovesBlack(GameBoard board) {
         Set<Integer> result = new HashSet<>();
         if (board.existsPiece(position + 7) && board.getPiece(position + 7).getAllegiance().equals("W")) {
@@ -72,6 +78,8 @@ public class Pawn extends Piece {
         return result;
     }
 
+    // MODIFIES: result
+    // EFFECTS: if en passant is possible (for black), adds the move to the inputted set.
     private void addEnPassantB(GameBoard board, Set<Integer> result) {
         Move m = board.getLastMove();
         if (m != null && m.getPiece().getName().equals("P")) {

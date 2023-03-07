@@ -10,7 +10,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Set;
 
-// todo game end checks and undo/move list
+
+// Class handling all UI functionality for chess game, instantiating this class runs the application.
 public class ChessGame {
     private GameBoard board;
     private MoveList moves;
@@ -224,8 +225,8 @@ public class ChessGame {
 
 
     // MODIFIES: this
-    // EFFECTS: prompts the user to confirm whether or not they wish to reset the board, if they type something that
-    // starts with y, reset the board, otherwise keeps board as is.
+    // EFFECTS: prompts the user to confirm whether they wish to reset the board, if they type something
+    // that starts with y, reset the board, otherwise keeps board as is.
     private void resetBoard() {
         System.out.println("Reset Board? (y/N)");
         String next = input.next().toLowerCase();

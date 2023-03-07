@@ -1,7 +1,5 @@
 package model;
 
-import ui.exceptions.PieceNotExistException;
-
 import java.util.ArrayList;
 
 // represents the current game state with all pieces and their locations
@@ -83,8 +81,11 @@ public class GameBoard {
         return true;
     }
 
+    // REQUIRES: board must always have a king; but this should always be the case.
+    // EFFECTS: returns true if the side moving is currently in check; otherwise returns false
     public boolean isCheck() {
         int kingSquare = 63;
+        // set a default square so game doesn't crash when there is no king, although this should never happen
         for (Piece p : pieces) {
             if (p.getName().equals("K") && p.getAllegiance().equals(turn)) {
                 kingSquare = p.getPosition();
@@ -101,7 +102,10 @@ public class GameBoard {
         return false;
     }
 
-    // updates board in special cases and returns piece being captured if applicable
+    // REQUIRES: board must have been initialized to start from a normal starting position
+    // MODIFIES: this
+    // EFFECTS: updates board in special cases and returns piece being captured if applicable. Basically moves pieces
+    // in cases outside normal movement or captures.
     private Piece updateBoard(Piece moving, int end) {
         // whether special moves are legal is determined by the piece class, this method only updates the board
         if (moving.getName().equals("P") && (end <= 7 || end >= 56)) {  // promotion
@@ -133,6 +137,8 @@ public class GameBoard {
         return getPiece(end);  // may also return null, in which case no piece will be captured
     }
 
+    // MODIFIES: this
+    // EFFECTS: switches from one turn to another
     private void toggleTurn() {
         if (turn.equals("W")) {
             turn = "B";
@@ -141,6 +147,7 @@ public class GameBoard {
         }
     }
 
+    // EFFECTS: Creates a perfect copy of the piece being input and returns it
     private Piece clonePiece(Piece p) {
         Piece clone;
         if (p.getName().equals("P")) {
@@ -335,6 +342,8 @@ public class GameBoard {
         pieces.add(new Queen("B", 3));
     }
 
+    // MODIFIES: this
+    // EFFECTS: add kings to the board
     private void addKings() {
         pieces.add(new King("W", 60));
         pieces.add(new King("B", 4));

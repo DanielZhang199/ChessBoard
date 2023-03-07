@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+// Knight piece
 public class Knight extends Piece {
 
     public Knight(String allegiance, int position) {
@@ -21,6 +22,8 @@ public class Knight extends Piece {
         return result;
     }
 
+    // EFFECTS: filters out moves that would cross the over sides of the board as a result of how coordinates work
+    // (top and bottom crossings are already accounted for)
     private void filterMoves(Set<Integer> result) {
         if (position % 8 <= 1) {
             result.removeAll(Arrays.asList(position + 6, position - 10));
