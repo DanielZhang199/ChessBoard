@@ -3,6 +3,7 @@ package persistence;
 import model.Move;
 import model.MoveList;
 import model.Pawn;
+import model.Rook;
 import org.junit.jupiter.api.Test;
 import persistence.JsonConverter;
 
@@ -53,7 +54,8 @@ public class JsonConverterTest {
             JsonConverter converter = new JsonConverter("./data/testReadWriteNormalMoveList.json");
             MoveList ml = new MoveList();
             ml.addMove(new Move(new Pawn("W", 52), 52, 36, false));
-            ml.addMove(new Move(new Pawn("B", 12), 12, 28, true));
+            // the next move doesn't make any sense, but is used for branch coverage
+            ml.addMove(new Move(new Pawn("B", 12), 12, 28, true, new Rook("W", 28)));
             converter.saveMoveList(ml);
 
             MoveList newML = converter.getMoveList();
