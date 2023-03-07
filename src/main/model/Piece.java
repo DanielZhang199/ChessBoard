@@ -14,11 +14,40 @@ public abstract class Piece implements Savable {
     protected String allegiance;  // "B" for black, "W" for white
     protected boolean moved;  // whether the piece has moved
 
+    // REQUIRES: position is in [0, 63], allegiance is either "W" or "B"
     // EFFECTS: sets the side and position of the piece, affirms that the piece has not yet moved
     protected Piece(String allegiance, int position) {
         this.allegiance = allegiance;
         this.position = position;
         this.moved = false;
+    }
+
+    // REQUIRES: position is in [0, 63], allegiance is either "W" or "B", type is either "P", "N", "B", "R", "Q", or "K"
+    // EFFECTS: creates a piece given its fields, useful for cloning by board and after reading data from json
+    public static Piece createPiece(String allegiance, int position, boolean moved, String type) {
+        Piece clone = instantiatePiece(allegiance, position, type);
+        if (moved) {
+            clone.setPosition(position);
+        }
+        return clone;
+    }
+
+    // EFFECTS: creates a piece of a given subtype given the type and constructor parameters
+    private static Piece instantiatePiece(String allegiance, int position, String type) {
+        switch (type) {
+            case "P":
+                return new Pawn(allegiance, position);
+            case "N":
+                return new Knight(allegiance, position);
+            case "B":
+                return new Bishop(allegiance, position);
+            case "R":
+                return new Rook(allegiance, position);
+            case "Q":
+                return new Queen(allegiance, position);
+            default:
+                return new King(allegiance, position);
+        }
     }
 
     // REQUIRES: position is a valid square to which the piece can move as governed by the board,
@@ -134,8 +163,8 @@ public abstract class Piece implements Savable {
     @Override
     public JSONObject toJson() {
         JSONObject result = new JSONObject();
-        result.put("position", position);
         result.put("allegiance", allegiance);
+        result.put("position", position);
         result.put("moved", moved);
         result.put("type", this.getName());
         return result;

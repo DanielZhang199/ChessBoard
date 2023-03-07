@@ -147,26 +147,9 @@ public class GameBoard {
         }
     }
 
-    // EFFECTS: Creates a perfect copy of the piece being input and returns it
+    // EFFECTS: Creates a perfect copy of the piece being input and returns it, this method is mostly used for clarity
     private Piece clonePiece(Piece p) {
-        Piece clone;
-        if (p.getName().equals("P")) {
-            clone = new Pawn(p.getAllegiance(), p.getPosition());
-        } else if (p.getName().equals("N")) {
-            clone = new Knight(p.getAllegiance(), p.getPosition());
-        } else if (p.getName().equals("B")) {
-            clone = new Bishop(p.getAllegiance(), p.getPosition());
-        } else if (p.getName().equals("R")) {
-            clone = new Rook(p.getAllegiance(), p.getPosition());
-        } else if (p.getName().equals("Q")) {
-            clone = new Queen(p.getAllegiance(), p.getPosition());
-        } else {
-            clone = new King(p.getAllegiance(), p.getPosition());
-        }
-        if (p.isMoved()) {
-            clone.setPosition(p.getPosition());
-        }
-        return clone;
+        return Piece.createPiece(p.getAllegiance(), p.getPosition(), p.isMoved(), p.getName());
     }
 
     // The next two methods will be used in public visibility only for testing
