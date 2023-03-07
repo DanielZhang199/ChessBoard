@@ -370,7 +370,6 @@ public class GameBoardTest {
         assertFalse(emptyBoard.checkStatus());  // white is in check, but game is not over
         emptyBoard.movePiece(60, 61);
         assertFalse(emptyBoard.checkStatus());
-        System.out.print(emptyBoard.getPiece(61).isMoved());
         emptyBoard.movePiece(7, 6);
         assertTrue(emptyBoard.checkStatus());
         assertEquals("Stalemate", emptyBoard.getStatus());
