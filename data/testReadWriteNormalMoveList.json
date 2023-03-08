@@ -1,1 +1,31 @@
-{"notationList":["e4","exe5+"],"moves":[{"piece":{"moved":false,"allegiance":"W","position":52,"type":"P"},"captured":null,"start":52,"end":36,"check":false},{"piece":{"moved":false,"allegiance":"B","position":12,"type":"P"},"captured":{"moved":false,"allegiance":"W","position":28,"type":"R"},"start":12,"end":28,"check":true}]}
+{"moves": [
+    {
+        "piece": {
+            "moved": false,
+            "allegiance": "W",
+            "position": 52,
+            "type": "P"
+        },
+        "captured": null,
+        "start": 52,
+        "end": 36,
+        "check": false
+    },
+    {
+        "piece": {
+            "moved": false,
+            "allegiance": "B",
+            "position": 12,
+            "type": "P"
+        },
+        "captured": {
+            "moved": false,
+            "allegiance": "W",
+            "position": 28,
+            "type": "R"
+        },
+        "start": 12,
+        "end": 28,
+        "check": true
+    }
+]}

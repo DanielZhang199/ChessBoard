@@ -1,11 +1,7 @@
 package persistence;
 
-import model.Move;
-import model.MoveList;
-import model.Pawn;
-import model.Rook;
+import model.*;
 import org.junit.jupiter.api.Test;
-import persistence.JsonConverter;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -16,17 +12,18 @@ public class JsonConverterTest {
 
     @Test
     public void FileNotExistTest() {
-        JsonConverter converter = new JsonConverter("./data/FileNotFound.json");
-
         try {
-            converter.saveMoveList(new MoveList());
-            fail("FileNotFoundException should have been thrown.");
-        } catch (FileNotFoundException e) {
+            JsonConverter.getMoveList("./data/FileNotFound.json");
+            fail("IOException should have been thrown.");
+        } catch (IOException e) {
             // pass
         }
+    }
 
+    @Test
+    public void InvalidFileNameTest() {
         try {
-            converter.getMoveList();
+            JsonConverter.saveMoveList(new MoveList(), "./data/I\nvalidFileName.json");
             fail("IOException should have been thrown.");
         } catch (IOException e) {
             // pass
@@ -36,10 +33,9 @@ public class JsonConverterTest {
     @Test
     public void testReadWriteEmptyMoveList() {
         try {
-            JsonConverter converter = new JsonConverter("./data/testReadWriteEmptyMoveList.json");
-            converter.saveMoveList(new MoveList());
+            JsonConverter.saveMoveList(new MoveList(), "./data/testReadWriteEmptyMoveList.json");
 
-            MoveList ml = converter.getMoveList();
+            MoveList ml = JsonConverter.getMoveList("./data/testReadWriteEmptyMoveList.json");
             assertEquals(0, ml.getSize());
         } catch (FileNotFoundException e) {
             fail("No FileNotFoundException should have been thrown");
@@ -51,14 +47,13 @@ public class JsonConverterTest {
     @Test
     public void testReadWriteNormalMoveList() {
         try {
-            JsonConverter converter = new JsonConverter("./data/testReadWriteNormalMoveList.json");
             MoveList ml = new MoveList();
             ml.addMove(new Move(new Pawn("W", 52), 52, 36, false));
             // the next move doesn't make any sense, but is used for branch coverage
             ml.addMove(new Move(new Pawn("B", 12), 12, 28, true, new Rook("W", 28)));
-            converter.saveMoveList(ml);
+            JsonConverter.saveMoveList(ml, "./data/testReadWriteNormalMoveList.json");
 
-            MoveList newML = converter.getMoveList();
+            MoveList newML = JsonConverter.getMoveList("./data/testReadWriteNormalMoveList.json");
             assertEquals(2, newML.getSize());
             assertEquals(ml.getNotationList(), newML.getNotationList());
 
@@ -78,7 +73,17 @@ public class JsonConverterTest {
         }
     }
 
-    private boolean moveEquals(Move original, Move test) {
-        return false;
+    // make sure all fields on the move are equal, since you normally wouldn't need to do this
+    private boolean moveEquals(Move x, Move y) {
+        return x.getEnd() == y.getEnd() && x.getStart() == y.getStart() && x.isCheck()== y.isCheck()
+                && pieceEquals(x.getPiece(), y.getPiece()) && pieceEquals(x.getCaptured(), y.getCaptured());
+    }
+
+    private boolean pieceEquals(Piece x, Piece y) {
+        if (x == null) {
+            return y == null;
+        }
+        return x.isMoved() == y.isMoved() && x.getAllegiance().equals(y.getAllegiance())
+                && x.getName().equals(y.getName()) && x.getPosition() == y.getPosition();
     }
 }
