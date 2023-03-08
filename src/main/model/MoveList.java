@@ -26,12 +26,14 @@ public class MoveList implements Savable {
         notationList = new ArrayList<>();
     }
 
-    // EFFECTS: returns the size of arrays
     public int getSize() {
         return notationList.size();
     }
 
-    // EFFECTS: copies and returns a human-readable list
+    public ArrayList<Move> getMoveList() {
+        return new ArrayList<>(moves);
+    }
+
     public ArrayList<String> getNotationList() {
         return new ArrayList<>(notationList);
     }
@@ -128,7 +130,6 @@ public class MoveList implements Savable {
     @Override
     public JSONObject toJson() {
         JSONObject result = new JSONObject();
-        result.put("notationList", new JSONArray(this.notationList));
         result.put("moves", movesToJson());
         return result;
     }

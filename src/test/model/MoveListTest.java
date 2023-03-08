@@ -17,6 +17,7 @@ public class MoveListTest {
     public void testConstructor() {
         assertEquals(0, testList.getNotationList().size());
         assertEquals(0, testList.getSize());
+        assertEquals(0, testList.getMoveList().size());
     }
 
     @Test
