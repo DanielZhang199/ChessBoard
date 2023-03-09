@@ -15,8 +15,10 @@ import java.util.ArrayList;
 import java.util.stream.Stream;
 
 // utility class with functionality that can read to and write from a file.
-public class JsonConverter {
+public final class JsonConverter {
     private static final int INDENT = 4;
+
+    private JsonConverter() {}
 
     // EFFECTS: reads from specified file and returns a move list generated the moves in that file.
     public static MoveList getMoveList(String file) throws IOException {
