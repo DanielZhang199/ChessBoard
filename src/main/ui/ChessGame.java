@@ -2,11 +2,15 @@ package ui;
 
 import model.*;
 import model.exceptions.NotValidSquareException;
+import persistence.JsonConverter;
+import ui.exceptions.InvalidMoveMadeException;
 import ui.exceptions.PieceBelongEnemyException;
 import ui.exceptions.PieceNoMovesException;
 import ui.exceptions.PieceNotExistException;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -16,6 +20,8 @@ public class ChessGame {
     private GameBoard board;
     private MoveList moves;
     private Scanner input;
+    private static final int NUM_SAVE_SLOTS = 3;
+    private static final String SAVE_FILE_PREFIX = "./data/saveFile";
 
     // EFFECTS: runs the chess application
     public ChessGame() {
@@ -30,25 +36,138 @@ public class ChessGame {
 
         init();
         displayInfo();
-
+        System.out.println("Input coordinates of piece or a command (enter 'h' for help):");
         while (notDone) {
-            System.out.println("Input coordinates of piece to move or a command:");
             action = input.next().toLowerCase();
             if (action.startsWith("q")) {
+                optionalSave();
                 notDone = false;
-            } else if (action.startsWith("r")) {
-                resetBoard();
-            } else if (action.startsWith("u")) {
-                undoMove();
-            } else if (action.startsWith("m")) {
-                showMoves("");
-            } else if (board.getStatus() == null) {
-                handleMove(action);
             } else {
-                System.out.println("You cannot move pieces; the game is over!");
+                handleAction(action);
+            }
+            if (board.getStatus() == null) {
+                System.out.println("Input coordinates of piece or a command:");
+            } else {
+                System.out.println("Input a command:");
             }
         }
         System.out.println("\n --Exiting Application--");
+    }
+
+    private void handleAction(String action) {
+        if (action.startsWith("s")) {
+            handleSave();
+        } else if (action.startsWith("l")) {
+            handleLoad();
+        } else if (action.startsWith("r")) {
+            resetBoard();
+        } else if (action.startsWith("u")) {
+            undoMove();
+        } else if (action.startsWith("m")) {
+            showMoves("");
+        } else if (action.startsWith("h")) {
+            displayHelp();
+        } else if (board.getStatus() == null) {
+            handleMove(action);
+        } else {
+            System.out.println("You cannot move pieces; the game is over!");
+        }
+    }
+
+    private void displayHelp() {
+        System.out.println("Command List:");
+        System.out.println("- quit ('q'):");
+        System.out.println("- save ('s'):");
+        System.out.println("- load ('l'):");
+        System.out.println("- reset board ('r'):");
+        System.out.println("- undo ('u'):");
+        System.out.println("- show moves ('m'):");
+        System.out.println("- help ('h'):\n");
+        System.out.println("To make a move, type in the coordinates of the piece you wish to move, "
+                + "as if you were making a move on a graphical chess board.");
+    }
+
+    // MODIFIES: this
+    // EFFECTS: Asks user to choose save file, tries to load in new save file by overwriting moves and board successful
+    // otherwise, displays relevant error info
+    private void handleLoad() {
+        displaySaveSlots();
+        int choice = input.nextInt();
+        if (choice < 0 || choice > NUM_SAVE_SLOTS) {
+            System.out.println("Invalid save slot chosen.");
+            return;
+        }
+        try {
+            loadGame(choice);
+        } catch (IOException e) {
+            System.out.println("An error occurred while loading save, or this save file does not exist.");
+        }  catch (InvalidMoveMadeException e) {
+            System.out.println("There was an issue loading the board; the save file may be corrupted.");
+            System.out.println("Returning to original game ...");
+        }
+    }
+
+    private void loadGame(int slot) throws InvalidMoveMadeException, IOException {
+        MoveList tempML = JsonConverter.getMoveList(SAVE_FILE_PREFIX + slot + ".json");
+        GameBoard tempBoard = new GameBoard();
+        for (Move m : tempML.getMoveList()) {
+            if (!tempBoard.movePiece(m.getStart(), m.getEnd())) {
+                throw new InvalidMoveMadeException();
+            }
+        }
+        moves = tempML;
+        board = tempBoard;
+        System.out.println("Game loaded from slot " + slot + ".");
+        if (board.checkStatus()) {
+            handleGameEnd();
+        } else {
+            displayInfo();
+        }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: Asks user to choose save file, tries to save current data into the save file or displays relevant error
+    private void handleSave() {
+        displaySaveSlots();
+        int choice = input.nextInt();
+        if (choice < 0 || choice > NUM_SAVE_SLOTS) {
+            System.out.println("Invalid save slot chosen; game was not saved.");
+            return;
+        }
+        try {
+            JsonConverter.saveMoveList(moves, SAVE_FILE_PREFIX + choice + ".json");
+            System.out.println("Game saved to slot " + choice + ".");
+            displayInfo();
+        } catch (IOException e) {
+            System.out.println("An error occurred while saving.");
+        }
+    }
+
+    // EFFECTS: displays the save slots available for the user with information about the number of moves and last move
+    private void displaySaveSlots() {
+        System.out.println("Save Slots: \n");
+        for (int i = 1; i <= NUM_SAVE_SLOTS; i++) {
+            try {
+                List<String> savedMoves = JsonConverter.getNotationList(SAVE_FILE_PREFIX + i + ".json");
+                if (savedMoves.isEmpty()) {
+                    System.out.println(i + ". EMPTY SLOT");
+                }
+                System.out.println(i + ". Turn " + (savedMoves.size() / 2 + 1)
+                        + " | Last Move: " + savedMoves.get(savedMoves.size() - 1));
+            } catch (IOException e) {
+                System.out.println(i + ". EMPTY SLOT");
+            }
+        }
+        System.out.println("Select save slot (1 - " + NUM_SAVE_SLOTS + "):");
+    }
+
+    // EFFECTS: Gives user option to save the game
+    private void optionalSave() {
+        System.out.println("Would you like to save the game? (y/N)");
+        String reply = input.next().toLowerCase();
+        if (reply.startsWith("y")) {
+            handleSave();
+        }
     }
 
     // MODIFIES: this

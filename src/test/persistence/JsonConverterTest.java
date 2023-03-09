@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,9 +35,8 @@ public class JsonConverterTest {
     public void testReadWriteEmptyMoveList() {
         try {
             JsonConverter.saveMoveList(new MoveList(), "./data/testReadWriteEmptyMoveList.json");
-
-            MoveList ml = JsonConverter.getMoveList("./data/testReadWriteEmptyMoveList.json");
-            assertEquals(0, ml.getSize());
+            assertEquals(0, JsonConverter.getNotationList("./data/testReadWriteEmptyMoveList.json").size());
+            assertEquals(0, JsonConverter.getMoveList("./data/testReadWriteEmptyMoveList.json").getSize());
         } catch (FileNotFoundException e) {
             fail("No FileNotFoundException should have been thrown");
         } catch (IOException e) {
@@ -66,6 +66,11 @@ public class JsonConverterTest {
             Move new2 = ml.getPreviousMove();
             assertTrue(moveEquals(original1, new1));
             assertTrue(moveEquals(original2, new2));
+
+            ArrayList<String> notationList = JsonConverter.getNotationList("./data/testReadWriteNormalMoveList.json");
+            assertEquals(2, notationList.size());
+            assertEquals("e4", notationList.get(0));
+            assertEquals("exe5+", notationList.get(1));
         } catch (FileNotFoundException e) {
             fail("No FileNotFoundException should have been thrown");
         } catch (IOException e) {

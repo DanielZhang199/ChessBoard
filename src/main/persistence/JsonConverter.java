@@ -11,6 +11,7 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.stream.Stream;
 
 // utility class with functionality that can read to and write from a file.
@@ -32,6 +33,19 @@ public class JsonConverter {
             result.addMove(jsonToMove((JSONObject) move));
         }
 
+        return result;
+    }
+
+    public static ArrayList<String> getNotationList(String file) throws IOException {
+        StringBuilder builder = new StringBuilder();
+        try (Stream<String> stream = Files.lines(Paths.get(file), StandardCharsets.UTF_8)) {
+            stream.forEach(builder::append);
+        }
+        JSONArray jsonMoves = new JSONObject(builder.toString()).getJSONArray("notation");
+        ArrayList<String> result = new ArrayList<>();
+        for (Object move : jsonMoves) {
+            result.add(move.toString());
+        }
         return result;
     }
 

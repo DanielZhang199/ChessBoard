@@ -130,6 +130,7 @@ public class MoveList implements Savable {
     @Override
     public JSONObject toJson() {
         JSONObject result = new JSONObject();
+        result.put("notation", new JSONArray(notationList));
         result.put("moves", movesToJson());
         return result;
     }
