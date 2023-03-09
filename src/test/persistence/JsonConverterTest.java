@@ -12,6 +12,13 @@ import static org.junit.jupiter.api.Assertions.*;
 public class JsonConverterTest {
 
     @Test
+    // There is no constructor, so this is just for coverage
+    public void ConstructorTest() {
+        JsonConverter jc = new JsonConverter();
+        assertTrue(jc instanceof JsonConverter);
+    }
+
+    @Test
     public void FileNotExistTest() {
         try {
             JsonConverter.getMoveList("./data/FileNotFound.json");

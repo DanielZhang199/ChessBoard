@@ -78,6 +78,4 @@ public class JsonConverter {
         writer.print(ml.toJson().toString(INDENT));
         writer.close();
     }
-
-
 }
