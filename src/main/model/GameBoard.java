@@ -33,7 +33,7 @@ public class GameBoard {
         lastMove = null;
     }
 
-    // EFFECTS: returns true if there exists a piece with the coordinates on the board
+    // EFFECTS: returns true if there exists a piece with coordinates equal to pos
     public boolean existsPiece(int pos) {
         for (Piece p : pieces) {
             if (p.getPosition() == pos) {
@@ -169,7 +169,7 @@ public class GameBoard {
         pieces.removeIf(p -> p.getPosition() == position);
     }
 
-    // REQUIRES: there must be a piece at start coordinates
+    // REQUIRES: there must be a piece at start coordinates, and piece.getMoves().contains(end) value.
     // EFFECTS: returns true if the side moving is in check after move, i.e. if opponent is able to capture
     // king if it were to be making the move; exception will be thrown if there is no piece found at start
     public boolean testCheck(int start, int end) {
@@ -325,6 +325,7 @@ public class GameBoard {
         pieces.add(new Queen("B", 3));
     }
 
+    // REQUIRES: kings are not already on board
     // MODIFIES: this
     // EFFECTS: add kings to the board
     private void addKings() {
