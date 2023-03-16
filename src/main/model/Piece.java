@@ -53,8 +53,15 @@ public abstract class Piece implements Savable {
     // REQUIRES: position is a valid square to which the piece can move as governed by the board,
     // position is within interval [0, 63]
     // MODIFIES: this
-    // EFFECTS: changes position of the piece to specified new position, flags the piece to have moved
-    public void setPosition(int position) {
+    // EFFECTS: changes position of the piece to specified new position, flags the piece to have moved, moves piece in
+    // board that the piece is on as well.
+    public void setPosition(int position, GameBoard gb) {
+        // call this method to change position of piece on board
+        gb.changePos(this, position);
+    }
+
+    protected void setPosition(int position) {
+        // this method is for internal use only (i.e. when board is changing position of pieces
         this.position = position;
         if (!moved) {
             this.moved = true;

@@ -1,10 +1,12 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 // represents the current game state with all pieces and their locations
 public class GameBoard {
-    private ArrayList<Piece> pieces;  // list of pieces on board, squares are listed 0 to 63; refer to README diagram
+    private Map<Integer, Piece> pieces;  // list of pieces on board, key is the position of piece
     private String turn; // the side that gets to move next turn; either "W" or "B"
     private String status;  // end result of game, null if not applicable
     private Move lastMove;  // the most recent move of the game; useful for displays and for en passant
@@ -13,7 +15,7 @@ public class GameBoard {
     // EFFECTS: creates a board with pieces on starting positions, with white to move, and no moves played yet.
     // if empty is set to true, only kings will be put on the board when initialized
     public GameBoard(boolean empty) {
-        pieces = new ArrayList<>();
+        pieces = new HashMap<>();
         if (!empty) {
             setup();
         } else {
@@ -26,7 +28,7 @@ public class GameBoard {
 
     // EFFECTS: creates a board with pieces on starting positions, with white to move, and no moves played yet.
     public GameBoard() {
-        pieces = new ArrayList<>();
+        pieces = new HashMap<>();
         setup();
         turn = "W";
         status = null;
@@ -35,22 +37,12 @@ public class GameBoard {
 
     // EFFECTS: returns true if there exists a piece with coordinates equal to pos
     public boolean existsPiece(int pos) {
-        for (Piece p : pieces) {
-            if (p.getPosition() == pos) {
-                return true;
-            }
-        }
-        return false;
+        return pieces.get(pos) != null;
     }
 
     // EFFECTS: returns the piece object on specified square, or null if piece does not exist
     public Piece getPiece(int pos) {
-        for (Piece p : pieces) {
-            if (p.getPosition() == pos) {
-                return p;
-            }
-        }
-        return null;
+        return pieces.get(pos);
     }
 
     // REQUIRES: nothing
@@ -60,25 +52,34 @@ public class GameBoard {
     // the board. updates lastMove. method returns true
     // ELSE, method returns false.
     public boolean movePiece(int start, int end) {
-        if (!existsPiece(start)) {
+        Piece moving = getPiece(start);
+        if (moving == null) {
             return false;
         }
-        Piece moving = getPiece(start);
         if (!moving.getLegalMoves(this).contains(end)) {
             return false;
         }
         Piece clone = clonePiece(moving);
         Piece captured = updateBoard(moving, end);
-
-        moving.setPosition(end);
-        toggleTurn();
         if (captured != null) {
-            pieces.remove(captured);
+            pieces.remove(captured.getPosition());
             lastMove = new Move(clone, start, end, isCheck(), captured);
         } else {
             lastMove = new Move(clone, start, end, isCheck());
         }
+        if (!existsPiece(end)) {
+            moving.setPosition(end);
+            pieces.remove(start);
+            addPiece(moving);
+        }
+        toggleTurn();
         return true;
+    }
+
+    public void changePos(Piece p, int end) {
+        pieces.remove(p.getPosition());
+        p.setPosition(end);
+        pieces.put(end, p);
     }
 
     // REQUIRES: board must always have a king; but this should always be the case.
@@ -86,13 +87,13 @@ public class GameBoard {
     public boolean isCheck() {
         int kingSquare = 63;
         // set a default square so game doesn't crash when there is no king, although this should never happen
-        for (Piece p : pieces) {
+        for (Piece p : pieces.values()) {
             if (p.getName().equals("K") && p.getAllegiance().equals(turn)) {
                 kingSquare = p.getPosition();
                 break;
             }
         }
-        for (Piece p : pieces) {
+        for (Piece p : pieces.values()) {
             if (!p.getAllegiance().equals(turn)) {
                 if (p.getMoves(this).contains(kingSquare)) {
                     return true;
@@ -105,26 +106,27 @@ public class GameBoard {
     // REQUIRES: board must have been initialized to start from a normal starting position
     // MODIFIES: this
     // EFFECTS: updates board in special cases and returns piece being captured if applicable. Basically moves pieces
-    // in cases outside normal movement or captures.
+    // in cases outside normal movement or captures. The piece being captured needs to be found in this method due to
+    // en passant tests being here.
     private Piece updateBoard(Piece moving, int end) {
         // whether special moves are legal is determined by the piece class, this method only updates the board
         if (moving.getName().equals("P") && (end <= 7 || end >= 56)) {  // promotion
-            pieces.remove(moving);
+            pieces.remove(moving.getPosition());
             Piece captured = getPiece(end);
-            pieces.add(new Queen(moving.getAllegiance(), end));
+            addPiece(new Queen(moving.getAllegiance(), end));
             return captured;
             // assume that all pawns promote into queens
 
         } else if (moving.getName().equals("K") && !moving.isMoved()) { // castling
             if (end == 62) {
                 // we trust that there is already a rook on 63, since otherwise this would not be legal end move
-                getPiece(63).setPosition(61);
+                changePos(getPiece(63), 61);
             } else if (end == 58) {
-                getPiece(56).setPosition(59);
+                changePos(getPiece(56), 59);
             } else if (end == 2) {
-                getPiece(0).setPosition(3);
+                changePos(getPiece(0), 3);
             } else if (end == 6) {
-                getPiece(7).setPosition(5);
+                changePos(getPiece(7), 5);
             }
 
         } else if (lastMove != null && lastMove.getPiece().getName().equals("P") && moving.getName().equals("P")) {
@@ -158,7 +160,7 @@ public class GameBoard {
     // MODIFIES: this
     // EFFECTS: adds a piece to the board
     public void addPiece(Piece piece) {
-        pieces.add(piece);
+        pieces.put(piece.getPosition(), piece);
     }
 
     // REQUIRES: the piece at the coordinates is not a king
@@ -166,32 +168,33 @@ public class GameBoard {
     // EFFECTS: removes a piece from the board; if piece is king, method will work, but chess can't be played without
     // a king.
     public void removePiece(int position) {
-        pieces.removeIf(p -> p.getPosition() == position);
+        pieces.remove(position);
     }
 
     // REQUIRES: there must be a piece at start coordinates, and piece.getMoves().contains(end) value.
     // EFFECTS: returns true if the side moving is in check after move, i.e. if opponent is able to capture
     // king if it were to be making the move; exception will be thrown if there is no piece found at start
     public boolean testCheck(int start, int end) {
-        ArrayList<Piece> original = tempBoard();
-        Piece moving = getPiece(start); // unfortunately there is nothing that can be done to handle this exception
+        HashMap<Integer, Piece> original = tempBoard();
+        Piece moving = getPiece(start);
         Piece captured = updateBoard(moving, end);
-        moving.setPosition(end);
         if (captured != null) {
-            pieces.remove(captured);
+            pieces.remove(captured.getPosition());
         }
+        changePos(moving, end);
         boolean val = isCheck();
         this.pieces = original;
         return val;
     }
 
+    // MODIFIES: this
     // EFFECTS: creates the move on game board with cloned pieces, but saves previous state in return value
     // i.e. this method replaces board with a deep clone of the board
-    private ArrayList<Piece> tempBoard() {
-        ArrayList<Piece> original = new ArrayList<>(this.pieces);
-        this.pieces = new ArrayList<>();
-        for (Piece p : original) {
-            pieces.add(clonePiece(p));
+    private HashMap<Integer, Piece> tempBoard() {
+        HashMap<Integer, Piece> original = new HashMap<>(this.pieces);
+        this.pieces = new HashMap<>();
+        for (int i : original.keySet()) {
+            addPiece(clonePiece(original.get(i)));
         }
         return original;
     }
@@ -223,14 +226,14 @@ public class GameBoard {
 
     private boolean testNoMoves() {
         if (turn.equals("W")) {
-            for (Piece p : pieces) {
+            for (Piece p : pieces.values()) {
                 if (p.getAllegiance().equals("W") && p.getLegalMoves(this).size() > 0) {
                     return false;
                 }
             }
             return true;
         }  // no need for else here
-        for (Piece p : pieces) {
+        for (Piece p : pieces.values()) {
             if (p.getAllegiance().equals("B") && p.getLegalMoves(this).size() > 0) {
                 return false;
             }
@@ -252,7 +255,7 @@ public class GameBoard {
         ArrayList<String> piecesW = new ArrayList<>();
         ArrayList<String> piecesB = new ArrayList<>();
         ArrayList<String> current;
-        for (Piece p : pieces) {
+        for (Piece p : pieces.values()) {
             // depending on the colour of piece,
             // we check and add pieces to the array that corresponds to the colour.
             if (p.getAllegiance().equals("W")) {
@@ -303,34 +306,34 @@ public class GameBoard {
     private void setup() {
         addKings();
         for (int i = 8; i <= 15; i++) {
-            pieces.add(new Pawn("B", i));
-            pieces.add(new Pawn("W", i + 40));
+            addPiece(new Pawn("B", i));
+            addPiece(new Pawn("W", i + 40));
         }
-        pieces.add(new Rook("B", 0));
-        pieces.add(new Rook("B", 7));
-        pieces.add(new Rook("W", 56));
-        pieces.add(new Rook("W", 63));
+        addPiece(new Rook("B", 0));
+        addPiece(new Rook("B", 7));
+        addPiece(new Rook("W", 56));
+        addPiece(new Rook("W", 63));
 
-        pieces.add(new Knight("B", 1));
-        pieces.add(new Knight("B", 6));
-        pieces.add(new Knight("W", 57));
-        pieces.add(new Knight("W", 62));
+        addPiece(new Knight("B", 1));
+        addPiece(new Knight("B", 6));
+        addPiece(new Knight("W", 57));
+        addPiece(new Knight("W", 62));
 
-        pieces.add(new Bishop("B", 2));
-        pieces.add(new Bishop("B", 5));
-        pieces.add(new Bishop("W", 58));
-        pieces.add(new Bishop("W", 61));
+        addPiece(new Bishop("B", 2));
+        addPiece(new Bishop("B", 5));
+        addPiece(new Bishop("W", 58));
+        addPiece(new Bishop("W", 61));
 
-        pieces.add(new Queen("W", 59));
-        pieces.add(new Queen("B", 3));
+        addPiece(new Queen("W", 59));
+        addPiece(new Queen("B", 3));
     }
 
     // REQUIRES: kings are not already on board
     // MODIFIES: this
     // EFFECTS: add kings to the board
     private void addKings() {
-        pieces.add(new King("W", 60));
-        pieces.add(new King("B", 4));
+        addPiece(new King("W", 60));
+        addPiece(new King("B", 4));
     }
 
     public Move getLastMove() {
@@ -346,9 +349,9 @@ public class GameBoard {
         if (lastMove != null) {
             Piece p = lastMove.getPiece();
             removePiece(lastMove.getEnd());
-            pieces.add(p);
+            addPiece(p);
             if (lastMove.getCaptured() != null) {
-                pieces.add(lastMove.getCaptured());
+                addPiece(lastMove.getCaptured());
             }
             toggleTurn();
             lastMove = newPreviousMove;
@@ -363,9 +366,9 @@ public class GameBoard {
         if (lastMove != null) {
             Piece p = lastMove.getPiece();
             removePiece(lastMove.getEnd());
-            pieces.add(p);
+            addPiece(p);
             if (lastMove.getCaptured() != null) {
-                pieces.add(lastMove.getCaptured());
+                addPiece(lastMove.getCaptured());
             }
             toggleTurn();
             lastMove = null;
