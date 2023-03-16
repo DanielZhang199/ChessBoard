@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PieceTest {
     private final Piece testPiece = new Rook("B", 0);
+    private final GameBoard board = new GameBoard(true);
 
     @Test
     public void testConstructor() {

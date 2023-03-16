@@ -34,7 +34,7 @@ public class QueenTest {
     @Test
     public void testGetMovesNoObstacles() {
         board.addPiece(testQueenW);
-        testQueenW.setPosition(43);
+        testQueenW.setPosition(43, board);
         Set<Integer> moveList = testQueenW.getLegalMoves(board);
         assertEquals(25, moveList.size()); // queen should be able to see 25 squares
         List<Integer> squares = Arrays.asList(3, 11, 19, 27, 35, 51, 59, 40, 41, 42, 44, 45, 46, 47, 16, 25, 34, 52, 61,
@@ -132,7 +132,7 @@ public class QueenTest {
     @Test
     public void testPin() {
         board.addPiece(testQueenW);
-        testQueenW.setPosition(44);
+        testQueenW.setPosition(44, board);
         board.addPiece(new Rook("B", 12));
         Set<Integer> moveList = testQueenW.getLegalMoves(board);
         List<Integer> squares = Arrays.asList(52, 36, 28, 20, 12);

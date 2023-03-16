@@ -33,7 +33,7 @@ public class BishopTest {
     @Test
     public void testGetMovesNoObstacles() {
         board.addPiece(testBishopW);
-        testBishopW.setPosition(43);
+        testBishopW.setPosition(43, board);
         Set<Integer> moveList = testBishopW.getLegalMoves(board);
         assertEquals(11, moveList.size()); // bishop should be able to see 11 squares
         List<Integer> squares = Arrays.asList(16, 25, 34, 52, 61, 57, 50, 36, 29, 22, 15);
@@ -121,7 +121,7 @@ public class BishopTest {
     @Test
     public void testPin() {
         board.addPiece(testBishopW);
-        testBishopW.setPosition(44);
+        testBishopW.setPosition(44, board);
         board.addPiece(new Rook("B", 12));
         assertEquals(0, testBishopW.getLegalMoves(board).size());
     }

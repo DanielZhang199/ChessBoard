@@ -34,7 +34,7 @@ public class RookTest {
     @Test
     public void testGetLegalMovesNoObstacles() {
         board.addPiece(testRookW);
-        testRookW.setPosition(43);
+        testRookW.setPosition(43, board);
         Set<Integer> moveList = testRookW.getLegalMoves(board);
         assertEquals(14, moveList.size()); // rook should be able to see 14 squares
         List<Integer> squares = Arrays.asList(3, 11, 19, 27, 35, 51, 59, 40, 41, 42, 44, 45, 46, 47);
@@ -125,7 +125,7 @@ public class RookTest {
     @Test
     public void testPin() {
         board.addPiece(testRookW);
-        testRookW.setPosition(44);
+        testRookW.setPosition(44, board);
         board.addPiece(new Rook("B", 12));
         Set<Integer> moveList = testRookW.getLegalMoves(board);
         List<Integer> squares = Arrays.asList(52, 36, 28, 20, 12);

@@ -32,7 +32,7 @@ public class KingTest {
 
     @Test
     public void testGetMovesNoObstacles() {
-        testKingW.setPosition(52);
+        board.changePos(testKingW, 52);
         Set<Integer> moveList = testKingW.getLegalMoves(board);
         assertEquals(8, moveList.size()); // king should be able to see 8 squares adjacent and diagonal
         List<Integer> squares = Arrays.asList(43, 44, 45, 51, 53, 59, 60, 61);
@@ -77,7 +77,7 @@ public class KingTest {
 
     @Test
     public void testNoCastleWhenKingMoved1() {
-        testKingW.setPosition(60);
+        testKingW.setPosition(60, board);
         board.addPiece(new Rook("W", 63));
         Set<Integer> moveList = testKingW.getLegalMoves(board);
         assertEquals(5, moveList.size());
@@ -96,7 +96,7 @@ public class KingTest {
 
     @Test
     public void testNoCastleWhenKingMoved2() {
-        testKingW.setPosition(60);
+        testKingW.setPosition(60, board);
         board.addPiece(new Rook("W", 56));
         Set<Integer> moveList = testKingW.getLegalMoves(board);
         assertEquals(5, moveList.size());
@@ -115,7 +115,7 @@ public class KingTest {
 
     @Test
     public void testNoCastleWhenKingMovedB1() {
-        testKingB.setPosition(4);
+        testKingB.setPosition(4, board);
         board.addPiece(new Rook("B", 7));
         board.movePiece(60, 59);
         Set<Integer> moveList = testKingB.getLegalMoves(board);
@@ -127,7 +127,7 @@ public class KingTest {
     public void testNoCastleWhenRookMovedB1() {
         board.addPiece(new Rook("B", 0));
         board.movePiece(60, 59);
-        board.getPiece(0).setPosition(0);
+        board.getPiece(0).setPosition(0, board);
         Set<Integer> moveList = testKingB.getLegalMoves(board);
         assertEquals(5, moveList.size());
         assertFalse(moveList.contains(2));
@@ -135,7 +135,7 @@ public class KingTest {
 
     @Test
     public void testNoCastleWhenKingMovedB2() {
-        testKingB.setPosition(4);
+        testKingB.setPosition(4, board);
         board.addPiece(new Rook("B", 0));
         board.movePiece(60, 59);
         Set<Integer> moveList = testKingB.getLegalMoves(board);
@@ -147,7 +147,7 @@ public class KingTest {
     public void testNoCastleWhenRookMovedB2() {
         board.addPiece(new Rook("B", 7));
         board.movePiece(60, 59);
-        board.getPiece(7).setPosition(7);
+        board.getPiece(7).setPosition(7, board);
         Set<Integer> moveList = testKingB.getLegalMoves(board);
         assertEquals(5, moveList.size());
         assertFalse(moveList.contains(6));
@@ -171,6 +171,24 @@ public class KingTest {
         Set<Integer> moveList = testKingB.getLegalMoves(board);
         assertEquals(3, moveList.size());
         assertFalse(moveList.contains(6));
+    }
+
+    @Test
+    public void testNoCastleWhenChecked3() {
+        board.addPiece(new Rook("B", 3));
+        board.addPiece(new Rook("W", 56));
+        Set<Integer> moveList = testKingW.getLegalMoves(board);
+        assertEquals(3, moveList.size());
+        assertFalse(moveList.contains(62));
+    }
+
+    @Test
+    public void testNoCastleWhenChecked4() {
+        board.addPiece(new Rook("B", 5));
+        board.addPiece(new Rook("W", 63));
+        Set<Integer> moveList = testKingW.getLegalMoves(board);
+        assertEquals(3, moveList.size());
+        assertFalse(moveList.contains(58));
     }
 
     // test that king can't capture own pieces
