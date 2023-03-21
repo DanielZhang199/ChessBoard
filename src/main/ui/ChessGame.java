@@ -25,16 +25,15 @@ public class ChessGame {
 
     // EFFECTS: runs the chess application
     public ChessGame() {
-        runGame();
+        init();
     }
 
     // MODIFIES: this
     // EFFECTS: initiates the class, and runs main loop of the game
     private void runGame() {
+
         boolean notDone = true;
         String action;
-
-        init();
         displayInfo();
         System.out.println("Input coordinates of piece or a command (enter 'h' for help):");
         while (notDone) {
@@ -173,10 +172,16 @@ public class ChessGame {
     // MODIFIES: this
     // EFFECTS: initializes fields
     private void init() {
-        board = new GameBoard();
-        moves = new MoveList();
+        System.out.println("Load Graphic User Interface? (Y/n)");
         input = new Scanner(System.in);
         input.useDelimiter("\n");
+        if (input.next().toLowerCase().startsWith("n")) {
+            board = new GameBoard();
+            moves = new MoveList();
+            runGame();
+        } else {
+            new ChessGameGUI();
+        }
     }
 
     // EFFECTS: displays the turn and a console representation of the board to the console
