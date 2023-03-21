@@ -35,5 +35,18 @@ challenges to not feel too trivial.
 7. As a user, I want to be given the option to load the previously saved board from a file.
 8. As a user, I want there to be multiple possible save slots.
 
+## Instructions for Grader (Phase 3)
+- You can generate the first required action related to adding Xs to a Y by running Main.main() and clicking on a white 
+pawn or knight. These are the icons either on the second row from the bottom of the checkerboard, 
+or 2 squares from each edge on the bottom most row.
+- You can generate the second required action related to adding Xs to a Y by clicking on one of the dotted that show up 
+on the square after performing the previous step. The piece will visually move, and the move will be recorded on the top
+right of the window.
+- You can locate my visual component by looking at the left half of the window that opens when you run the application.
+The chess board does not go away while the program is running.
+- You can save the state of my application by clicking the button labelled "Save".
+- You can reload the state of my application by clicking the button labelled "Load".
+> It's literally just a chess GUI...
+
 ## Board Grid
 ![8x8 grid from 0-63](grid.png "Putting this here for future reference")
