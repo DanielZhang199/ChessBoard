@@ -13,12 +13,15 @@ import java.util.*;
 
 // Class handling all GUI functionality for chess game
 public class ChessGameGUI extends JFrame implements ActionListener {
-    private static final int SIZE = 800;
+    private static final int SIZE_BOARD = 550;
+    private static final int SIZE_SIDE = 80;
     private static final Color WHITE_SQUARE = new Color(217, 169, 137);
     private static final Color BLACK_SQUARE = new Color(115, 69, 23);
-    private ArrayList<JButton> squares;
-    private GameBoard game;
-    private MoveList moveList;
+
+    private final DefaultListModel<String> moves = new DefaultListModel<>();
+    private final ArrayList<JButton> squares = new ArrayList<>();
+    private final GameBoard gameBoard = new GameBoard();
+    private final MoveList moveList = new MoveList();
     private Piece selected;
 
     public static void main(String[] args) {
@@ -29,7 +32,7 @@ public class ChessGameGUI extends JFrame implements ActionListener {
     // EFFECTS: runs the chess application
     public ChessGameGUI() {
         super("Chess: Phase 3");
-        setSize(SIZE + 400, SIZE);
+        setSize(SIZE_BOARD + SIZE_SIDE, SIZE_BOARD);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
         setResizable(false);
@@ -44,23 +47,45 @@ public class ChessGameGUI extends JFrame implements ActionListener {
     private void init() {
         createBoard();
         addSidePanel();
-
-        game = new GameBoard();
-        moveList = new MoveList();
-        updatePieces();
+        displayPieces();
     }
 
-    private void updatePieces() {
+    private void displayPieces() {
         for (int i = 0; i < 64; i++) {
-            if (this.game.existsPiece(i)) {
-                Piece p = game.getPiece(i);
+            if (this.gameBoard.existsPiece(i)) {
+                Piece p = gameBoard.getPiece(i);
                 squares.get(i).setIcon(new ImageIcon("./data/Images/" + p.getAllegiance() + p.getName() + ".png"));
+            } else {
+                squares.get(i).setIcon(null);
+            }
+        }
+    }
+    private void displayMoves() {
+        if (selected == null) {
+            System.out.println("Something went wrong as no piece is selected!");
+            // should also not ever run, but better than program crashing
+            return;
+        }
+        for (int i : selected.getLegalMoves(gameBoard)) {
+            squares.get(i).setIcon(new ImageIcon("./data/Images/dot.png"));
+        }
+    }
+
+    private void undisplayMoves() {
+        if (selected == null) {
+            return;
+        }
+        for (int i : selected.getLegalMoves(gameBoard)) {
+            if (gameBoard.existsPiece(i)) {
+                Piece p = gameBoard.getPiece(i);
+                squares.get(i).setIcon(new ImageIcon("./data/Images/" + p.getAllegiance() + p.getName() + ".png"));
+            } else {
+                squares.get(i).setIcon(null);
             }
         }
     }
 
     private void createBoard() {
-        squares = new ArrayList<>();
         JPanel board = new JPanel(new GridLayout(8, 8));
         Insets buttonMargin = new Insets(0,0,0, 0);
 
@@ -83,16 +108,17 @@ public class ChessGameGUI extends JFrame implements ActionListener {
         add(board, BorderLayout.CENTER);
     }
 
+    // todo: make this actually look good
     private void addSidePanel() {
         JPanel sidePanel = new JPanel(new GridLayout(5, 1));
-        sidePanel.setPreferredSize(new Dimension(400, SIZE));
-        JLabel label1 = new JLabel("MOVE LIST");
-        label1.setPreferredSize(new Dimension(400, SIZE / 2));
-        sidePanel.add(label1);
+        sidePanel.setPreferredSize(new Dimension(SIZE_SIDE, SIZE_BOARD));
+        JList<String> list = new JList<>(moves);
+        list.setPreferredSize(new Dimension(SIZE_SIDE, SIZE_BOARD / 2));
+        sidePanel.add(list);
         for (String s : Arrays.asList("Save", "Load", "Reset", "Undo")) {
             JButton button = new JButton(s);
             button.setActionCommand(s);
-            button.setPreferredSize(new Dimension(400, SIZE / 8));
+            button.setPreferredSize(new Dimension(SIZE_SIDE, SIZE_BOARD / 8));
             button.addActionListener(this);
             sidePanel.add(button);
         }
@@ -103,14 +129,15 @@ public class ChessGameGUI extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         try {
             int pos = Integer.parseInt(e.getActionCommand());
-            if (selected != null && selected.getLegalMoves(game).contains(pos)) {
+            if (selected != null && selected.getLegalMoves(gameBoard).contains(pos)) {
                 makeMove(pos);
-            } else {
-                selected = game.getPiece(pos);
+            } else if (gameBoard.getStatus() == null) {
+                undisplayMoves();
+                selected = gameBoard.getPiece(pos);
                 if (selected == null) {
                     return;
                 }
-                if (game.getTurn().equals(selected.getAllegiance())) {
+                if (gameBoard.getTurn().equals(selected.getAllegiance())) {
                     displayMoves();
                 } else {
                     selected = null;
@@ -121,17 +148,39 @@ public class ChessGameGUI extends JFrame implements ActionListener {
         }
     }
 
-    // todo: actually make changes on board
     private void makeMove(int pos) {
-        System.out.println("Moved to " + MoveList.fromCoordinate(pos));
+        if (gameBoard.movePiece(selected.getPosition(), pos)) {
+            moveList.addMove(gameBoard.getLastMove());
+            if (gameBoard.checkStatus()) {
+                handleGameEnd();
+            }
+            displayPieces();
+            updateMoves();
+        } else {
+            System.out.println("Something went wrong trying to move!");
+            // this section should never run, but is here just in case
+        }
+        selected = null;
+    }
+
+    private void updateMoves() {
+        if (gameBoard.getTurn().equals("B")) {
+            moves.addElement((moveList.getSize() / 2) + 1 + ". "
+                    + moveList.getNotationList().get(moveList.getSize() - 1) + "  ");
+        } else {
+            String s = moves.getElementAt(moves.getSize() - 1).concat(moveList.toNotation(gameBoard.getLastMove()));
+            moves.removeElementAt(moves.getSize() - 1);
+            moves.addElement(s);
+        }
+    }
+
+    // todo
+    private void handleGameEnd() {
+        System.out.println("Game Ended!");
     }
 
     private void handleCommand(String actionCommand) {
         System.out.println("Handle command: " + actionCommand);
-    }
-
-    private void displayMoves() {
-        System.out.println("Displaying Moves; Currently Selected: " + selected);
     }
 
 }
