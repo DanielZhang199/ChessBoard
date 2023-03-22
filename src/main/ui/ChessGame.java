@@ -201,7 +201,7 @@ public class ChessGame {
         for (int i = 0; i < 64; i++) {
             if (board.existsPiece(i)) {
                 Piece p = board.getPiece(i);
-                if (p.getAllegiance().equals("W")) {
+                if (p.getSide().equals("W")) {
                     squares.add(p.getName());
                 } else {
                     squares.add(p.getName().toLowerCase());
@@ -331,7 +331,7 @@ public class ChessGame {
             throw new PieceNotExistException();
         }
         Piece p = board.getPiece(coord);
-        if (!p.getAllegiance().equals(board.getTurn())) {
+        if (!p.getSide().equals(board.getTurn())) {
             throw new PieceBelongEnemyException();
         }
         Set<Integer> possibleMoves = p.getLegalMoves(board);

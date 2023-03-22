@@ -11,7 +11,7 @@ class PieceTest {
     @Test
     public void testConstructor() {
         assertEquals(0, testPiece.getPosition());
-        assertEquals("B", testPiece.getAllegiance());
+        assertEquals("B", testPiece.getSide());
         assertFalse(testPiece.isMoved());
     }
 
@@ -47,7 +47,7 @@ class PieceTest {
         Piece king = Piece.createPiece("B", 25, true, "K");
 
         assertEquals("R", rook.getName());
-        assertEquals("W", rook.getAllegiance());
+        assertEquals("W", rook.getSide());
         assertEquals(20, rook.getPosition());
         assertFalse(rook.isMoved());
         assertEquals("P", pawn.getName());

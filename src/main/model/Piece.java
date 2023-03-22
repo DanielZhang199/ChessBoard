@@ -72,7 +72,7 @@ public abstract class Piece implements Savable {
         return position;
     }
 
-    public String getAllegiance() {
+    public String getSide() {
         return allegiance;
     }
 
@@ -108,7 +108,7 @@ public abstract class Piece implements Savable {
         start += step;
         for (int i = start; i <= stop; i += step) {
             if (b.existsPiece(i)) {
-                if (!(b.getPiece(i).getAllegiance().equals(this.allegiance))) {
+                if (!(b.getPiece(i).getSide().equals(this.allegiance))) {
                     result.add(i);
                 }
                 break;
@@ -131,7 +131,7 @@ public abstract class Piece implements Savable {
         start -= step;
         for (int i = start; i >= stop; i -= step) {
             if (b.existsPiece(i)) {
-                if (!(b.getPiece(i).getAllegiance().equals(this.allegiance))) {
+                if (!(b.getPiece(i).getSide().equals(this.allegiance))) {
                     result.add(i);
                 }
                 break;

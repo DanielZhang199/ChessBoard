@@ -26,8 +26,8 @@ public class QueenTest {
     public void testConstructor() {
         assertEquals("Q", testQueenB.getName());
         assertEquals("Q", testQueenW.getName());
-        assertEquals("W", testQueenW.getAllegiance());
-        assertEquals("B", testQueenB.getAllegiance());
+        assertEquals("W", testQueenW.getSide());
+        assertEquals("B", testQueenB.getSide());
     }
 
 

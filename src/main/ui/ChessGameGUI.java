@@ -54,12 +54,13 @@ public class ChessGameGUI extends JFrame implements ActionListener {
         for (int i = 0; i < 64; i++) {
             if (this.gameBoard.existsPiece(i)) {
                 Piece p = gameBoard.getPiece(i);
-                squares.get(i).setIcon(new ImageIcon("./data/Images/" + p.getAllegiance() + p.getName() + ".png"));
+                squares.get(i).setIcon(new ImageIcon("./data/Images/" + p.getSide() + p.getName() + ".png"));
             } else {
                 squares.get(i).setIcon(null);
             }
         }
     }
+
     private void displayMoves() {
         if (selected == null) {
             System.out.println("Something went wrong as no piece is selected!");
@@ -78,7 +79,7 @@ public class ChessGameGUI extends JFrame implements ActionListener {
         for (int i : selected.getLegalMoves(gameBoard)) {
             if (gameBoard.existsPiece(i)) {
                 Piece p = gameBoard.getPiece(i);
-                squares.get(i).setIcon(new ImageIcon("./data/Images/" + p.getAllegiance() + p.getName() + ".png"));
+                squares.get(i).setIcon(new ImageIcon("./data/Images/" + p.getSide() + p.getName() + ".png"));
             } else {
                 squares.get(i).setIcon(null);
             }
@@ -137,7 +138,7 @@ public class ChessGameGUI extends JFrame implements ActionListener {
                 if (selected == null) {
                     return;
                 }
-                if (gameBoard.getTurn().equals(selected.getAllegiance())) {
+                if (gameBoard.getTurn().equals(selected.getSide())) {
                     displayMoves();
                 } else {
                     selected = null;

@@ -25,11 +25,11 @@ public class Pawn extends Piece {
     private Set<Integer> getMovesWhite(GameBoard board) {
         Set<Integer> result = new HashSet<>();
         if (position % 8 != 7 && board.existsPiece(position - 7)
-                && board.getPiece(position - 7).getAllegiance().equals("B")) {
+                && board.getPiece(position - 7).getSide().equals("B")) {
             result.add(position - 7);
         }
         if (position % 8 != 0 && board.existsPiece(position - 9)
-                && board.getPiece(position - 9).getAllegiance().equals("B")) {
+                && board.getPiece(position - 9).getSide().equals("B")) {
             result.add(position - 9);
         }
         if (!board.existsPiece(position - 8)) {
@@ -60,10 +60,10 @@ public class Pawn extends Piece {
     // EFFECTS: gets the set of all squares pawn can move to going down the board
     private Set<Integer> getMovesBlack(GameBoard board) {
         Set<Integer> result = new HashSet<>();
-        if (board.existsPiece(position + 7) && board.getPiece(position + 7).getAllegiance().equals("W")) {
+        if (board.existsPiece(position + 7) && board.getPiece(position + 7).getSide().equals("W")) {
             result.add(position + 7);
         }
-        if (board.existsPiece(position + 9) && board.getPiece(position + 9).getAllegiance().equals("W")) {
+        if (board.existsPiece(position + 9) && board.getPiece(position + 9).getSide().equals("W")) {
             result.add(position + 9);
         }
         if (!board.existsPiece(position + 8)) {

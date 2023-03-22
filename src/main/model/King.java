@@ -17,7 +17,7 @@ public class King extends Piece {
         Set<Integer> result = new HashSet<>(Arrays.asList(position + 1, position - 1, position + 7, position + 8,
                 position + 9, position - 7, position - 8, position - 9));
         result.removeIf(i -> i > 63 || i < 0);
-        result.removeIf(i -> board.existsPiece(i) && board.getPiece(i).getAllegiance().equals(allegiance));
+        result.removeIf(i -> board.existsPiece(i) && board.getPiece(i).getSide().equals(allegiance));
         return result;
     }
 

@@ -31,9 +31,9 @@ public class GameBoardTest {
 
         for (int i = 0; i <= 15; i++) {
             assertTrue(newBoard.existsPiece(i));
-            assertEquals("B", newBoard.getPiece(i).getAllegiance());
+            assertEquals("B", newBoard.getPiece(i).getSide());
             assertTrue(newBoard.existsPiece(i + 48));
-            assertEquals("W", newBoard.getPiece(i + 48).getAllegiance());
+            assertEquals("W", newBoard.getPiece(i + 48).getSide());
         }
 
         for (int i = 16; i <= 47; i++) {
@@ -86,7 +86,7 @@ public class GameBoardTest {
 
         // make sure piece is a white pawn
         assertEquals("P", newBoard.getPiece(36).getName());
-        assertEquals("W", newBoard.getPiece(36).getAllegiance());
+        assertEquals("W", newBoard.getPiece(36).getSide());
         // in theory, it would be best to test that no other pieces moved
         // in practice that would be a huge waste of time, since it will probably cause some other test to fail
 
@@ -97,7 +97,7 @@ public class GameBoardTest {
 
         // make sure piece is a black pawn
         assertEquals("P", newBoard.getPiece(28).getName());
-        assertEquals("B", newBoard.getPiece(28).getAllegiance());
+        assertEquals("B", newBoard.getPiece(28).getSide());
     }
 
     @Test
@@ -117,7 +117,7 @@ public class GameBoardTest {
 
         // make sure piece is a white knight
         assertEquals("N", newBoard.getPiece(28).getName());
-        assertEquals("W", newBoard.getPiece(28).getAllegiance());
+        assertEquals("W", newBoard.getPiece(28).getSide());
         assertEquals(31, newBoard.getNumPieces());
 
 
@@ -126,7 +126,7 @@ public class GameBoardTest {
 
         // make sure piece is a black knight
         assertEquals("N", newBoard.getPiece(36).getName());
-        assertEquals("B", newBoard.getPiece(36).getAllegiance());
+        assertEquals("B", newBoard.getPiece(36).getSide());
         assertEquals(30, newBoard.getNumPieces());
     }
 
@@ -135,9 +135,9 @@ public class GameBoardTest {
         emptyBoard.addPiece(new Rook("W", 63));
         assertTrue(emptyBoard.movePiece(60, 62)); // if this test fails, there is an issue with King class
         assertEquals("R", emptyBoard.getPiece(61).getName());
-        assertEquals("W", emptyBoard.getPiece(61).getAllegiance());
+        assertEquals("W", emptyBoard.getPiece(61).getSide());
         assertEquals("K", emptyBoard.getPiece(62).getName());
-        assertEquals("W", emptyBoard.getPiece(62).getAllegiance());
+        assertEquals("W", emptyBoard.getPiece(62).getSide());
     }
 
     @Test
@@ -145,9 +145,9 @@ public class GameBoardTest {
         emptyBoard.addPiece(new Rook("W", 56));
         assertTrue(emptyBoard.movePiece(60, 58)); // if this test fails, there is an issue with King class
         assertEquals("R", emptyBoard.getPiece(59).getName());
-        assertEquals("W", emptyBoard.getPiece(59).getAllegiance());
+        assertEquals("W", emptyBoard.getPiece(59).getSide());
         assertEquals("K", emptyBoard.getPiece(58).getName());
-        assertEquals("W", emptyBoard.getPiece(58).getAllegiance());
+        assertEquals("W", emptyBoard.getPiece(58).getSide());
     }
 
     @Test
@@ -155,9 +155,9 @@ public class GameBoardTest {
         emptyBoard.addPiece(new Rook("B", 7));
         assertTrue(emptyBoard.movePiece(4, 6)); // if this test fails, there is an issue with King class
         assertEquals("R", emptyBoard.getPiece(5).getName());
-        assertEquals("B", emptyBoard.getPiece(5).getAllegiance());
+        assertEquals("B", emptyBoard.getPiece(5).getSide());
         assertEquals("K", emptyBoard.getPiece(6).getName());
-        assertEquals("B", emptyBoard.getPiece(6).getAllegiance());
+        assertEquals("B", emptyBoard.getPiece(6).getSide());
     }
 
     @Test
@@ -165,9 +165,9 @@ public class GameBoardTest {
         emptyBoard.addPiece(new Rook("B", 0));
         assertTrue(emptyBoard.movePiece(4, 2)); // if this test fails, there is an issue with King class
         assertEquals("R", emptyBoard.getPiece(3).getName());
-        assertEquals("B", emptyBoard.getPiece(3).getAllegiance());
+        assertEquals("B", emptyBoard.getPiece(3).getSide());
         assertEquals("K", emptyBoard.getPiece(2).getName());
-        assertEquals("B", emptyBoard.getPiece(2).getAllegiance());
+        assertEquals("B", emptyBoard.getPiece(2).getSide());
     }
 
     @Test
@@ -213,7 +213,7 @@ public class GameBoardTest {
         newBoard.movePiece(11, 27);
         assertTrue(newBoard.movePiece(28, 19)); // if this test fails, there is an issue with Pawn class
         assertEquals("P", newBoard.getPiece(19).getName());
-        assertEquals("W", newBoard.getPiece(19).getAllegiance());
+        assertEquals("W", newBoard.getPiece(19).getSide());
         assertFalse(newBoard.existsPiece(27));
     }
     @Test
@@ -225,7 +225,7 @@ public class GameBoardTest {
         newBoard.movePiece(52, 36);
         assertTrue(newBoard.movePiece(35, 44)); // if this test fails, there is an issue with Pawn class
         assertEquals("P", newBoard.getPiece(44).getName());
-        assertEquals("B", newBoard.getPiece(44).getAllegiance());
+        assertEquals("B", newBoard.getPiece(44).getSide());
         assertFalse(newBoard.existsPiece(36));
     }
 
@@ -238,7 +238,7 @@ public class GameBoardTest {
         newBoard.movePiece(52, 36);
         assertTrue(newBoard.movePiece(35, 43)); // if this test fails, there is an issue with Pawn class
         assertEquals("P", newBoard.getPiece(43).getName());
-        assertEquals("B", newBoard.getPiece(43).getAllegiance());
+        assertEquals("B", newBoard.getPiece(43).getSide());
         assertTrue(newBoard.existsPiece(36));
     }
 
@@ -250,12 +250,12 @@ public class GameBoardTest {
         emptyBoard.addPiece(new Rook("W", 56));
         assertTrue(emptyBoard.existsPiece(56));
         assertEquals("R", emptyBoard.getPiece(56).getName());
-        assertEquals("W", emptyBoard.getPiece(56).getAllegiance());
+        assertEquals("W", emptyBoard.getPiece(56).getSide());
         assertEquals(3, emptyBoard.getNumPieces());
         emptyBoard.addPiece(new Bishop("B", 0));
         assertTrue(emptyBoard.existsPiece(0));
         assertEquals("B", emptyBoard.getPiece(0).getName());
-        assertEquals("B", emptyBoard.getPiece(0).getAllegiance());
+        assertEquals("B", emptyBoard.getPiece(0).getSide());
         assertEquals(4, emptyBoard.getNumPieces());
     }
 
@@ -440,7 +440,7 @@ public class GameBoardTest {
         newBoard.undo();
         assertFalse(newBoard.existsPiece(35));
         assertEquals("P", newBoard.getPiece(51).getName());
-        assertEquals("W", newBoard.getPiece(51).getAllegiance());
+        assertEquals("W", newBoard.getPiece(51).getSide());
         assertNull(newBoard.getLastMove());
     }
 
@@ -455,9 +455,9 @@ public class GameBoardTest {
         newBoard.undo(temp);
         assertTrue(newBoard.existsPiece(35));
         assertEquals("P", newBoard.getPiece(35).getName());
-        assertEquals("W", newBoard.getPiece(35).getAllegiance());
+        assertEquals("W", newBoard.getPiece(35).getSide());
         assertEquals("P", newBoard.getPiece(28).getName());
-        assertEquals("B", newBoard.getPiece(28).getAllegiance());
+        assertEquals("B", newBoard.getPiece(28).getSide());
         assertEquals(32, newBoard.getNumPieces());
     }
 
@@ -470,9 +470,9 @@ public class GameBoardTest {
         newBoard.undo();
         assertTrue(newBoard.existsPiece(35));
         assertEquals("P", newBoard.getPiece(35).getName());
-        assertEquals("W", newBoard.getPiece(35).getAllegiance());
+        assertEquals("W", newBoard.getPiece(35).getSide());
         assertEquals("P", newBoard.getPiece(28).getName());
-        assertEquals("B", newBoard.getPiece(28).getAllegiance());
+        assertEquals("B", newBoard.getPiece(28).getSide());
         assertEquals(32, newBoard.getNumPieces());
     }
 
@@ -486,21 +486,21 @@ public class GameBoardTest {
         assertTrue(newBoard.existsPiece(12));
         assertTrue(newBoard.existsPiece(36));
         assertEquals("P", newBoard.getPiece(12).getName());
-        assertEquals("B", newBoard.getPiece(12).getAllegiance());
+        assertEquals("B", newBoard.getPiece(12).getSide());
         newBoard.undo();  // no savedMove as there was no earlier moves made
         assertFalse(newBoard.existsPiece(36));
         assertEquals("P", newBoard.getPiece(52).getName());
-        assertEquals("W", newBoard.getPiece(52).getAllegiance());
+        assertEquals("W", newBoard.getPiece(52).getSide());
         newBoard.undo();
 
         // nothing will happen so there's nothing to test really
         assertFalse(newBoard.existsPiece(36));
         assertEquals("P", newBoard.getPiece(52).getName());
-        assertEquals("W", newBoard.getPiece(52).getAllegiance());
+        assertEquals("W", newBoard.getPiece(52).getSide());
 
         newBoard.undo(savedMove);  // don't do this; this is for coverage
         assertFalse(newBoard.existsPiece(36));
         assertEquals("P", newBoard.getPiece(52).getName());
-        assertEquals("W", newBoard.getPiece(52).getAllegiance());
+        assertEquals("W", newBoard.getPiece(52).getSide());
     }
 }

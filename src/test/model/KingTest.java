@@ -26,8 +26,8 @@ public class KingTest {
     public void testConstructor() {
         assertEquals("K", testKingB.getName());
         assertEquals("K", testKingW.getName());
-        assertEquals("W", testKingW.getAllegiance());
-        assertEquals("B", testKingB.getAllegiance());
+        assertEquals("W", testKingW.getSide());
+        assertEquals("B", testKingB.getSide());
     }
 
     @Test

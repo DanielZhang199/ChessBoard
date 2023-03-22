@@ -26,8 +26,8 @@ public class BishopTest {
     public void testConstructor() {
         assertEquals("B", testBishopB.getName());
         assertEquals("B", testBishopW.getName());
-        assertEquals("W", testBishopW.getAllegiance());
-        assertEquals("B", testBishopB.getAllegiance());
+        assertEquals("W", testBishopW.getSide());
+        assertEquals("B", testBishopB.getSide());
     }
 
     @Test
