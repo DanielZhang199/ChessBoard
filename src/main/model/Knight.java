@@ -18,7 +18,7 @@ public class Knight extends Piece {
                 position + 6, position + 10, position + 15, position + 17));
         filterMoves(result);
         result.removeIf(i -> i > 63 || i < 0);
-        result.removeIf(i -> board.existsPiece(i) && board.getPiece(i).getSide().equals(allegiance));
+        result.removeIf(i -> board.existsPiece(i) && board.getPiece(i).getAllegiance().equals(allegiance));
         return result;
     }
 

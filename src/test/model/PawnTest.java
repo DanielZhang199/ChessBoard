@@ -24,8 +24,8 @@ public class PawnTest {
     public void testConstructor() {
         assertEquals("P", testPawnB.getName());
         assertEquals("P", testPawnW.getName());
-        assertEquals("W", testPawnW.getSide());
-        assertEquals("B", testPawnB.getSide());
+        assertEquals("W", testPawnW.getAllegiance());
+        assertEquals("B", testPawnB.getAllegiance());
     }
 
     @Test

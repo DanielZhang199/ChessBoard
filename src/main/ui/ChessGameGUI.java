@@ -54,7 +54,7 @@ public class ChessGameGUI extends JFrame implements ActionListener {
         for (int i = 0; i < 64; i++) {
             if (this.gameBoard.existsPiece(i)) {
                 Piece p = gameBoard.getPiece(i);
-                squares.get(i).setIcon(new ImageIcon("./data/Images/" + p.getSide() + p.getName() + ".png"));
+                squares.get(i).setIcon(new ImageIcon("./data/Images/" + p.getAllegiance() + p.getName() + ".png"));
             } else {
                 squares.get(i).setIcon(null);
             }
@@ -79,7 +79,7 @@ public class ChessGameGUI extends JFrame implements ActionListener {
         for (int i : selected.getLegalMoves(gameBoard)) {
             if (gameBoard.existsPiece(i)) {
                 Piece p = gameBoard.getPiece(i);
-                squares.get(i).setIcon(new ImageIcon("./data/Images/" + p.getSide() + p.getName() + ".png"));
+                squares.get(i).setIcon(new ImageIcon("./data/Images/" + p.getAllegiance() + p.getName() + ".png"));
             } else {
                 squares.get(i).setIcon(null);
             }
@@ -138,7 +138,7 @@ public class ChessGameGUI extends JFrame implements ActionListener {
                 if (selected == null) {
                     return;
                 }
-                if (gameBoard.getTurn().equals(selected.getSide())) {
+                if (gameBoard.getTurn().equals(selected.getAllegiance())) {
                     displayMoves();
                 } else {
                     selected = null;

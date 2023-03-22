@@ -87,7 +87,7 @@ public class JsonConverterTest {
         if (x == null) {
             return y == null;
         }
-        return x.isMoved() == y.isMoved() && x.getSide().equals(y.getSide())
+        return x.isMoved() == y.isMoved() && x.getAllegiance().equals(y.getAllegiance())
                 && x.getName().equals(y.getName()) && x.getPosition() == y.getPosition();
     }
 }

@@ -89,13 +89,13 @@ public class GameBoard {
         int kingSquare = 63;
         // set a default square so game doesn't crash when there is no king, although this should never happen
         for (Piece p : pieces.values()) {
-            if (p.getName().equals("K") && p.getSide().equals(turn)) {
+            if (p.getName().equals("K") && p.getAllegiance().equals(turn)) {
                 kingSquare = p.getPosition();
                 break;
             }
         }
         for (Piece p : pieces.values()) {
-            if (!p.getSide().equals(turn)) {
+            if (!p.getAllegiance().equals(turn)) {
                 if (p.getMoves(this).contains(kingSquare)) {
                     return true;
                 }
@@ -114,7 +114,7 @@ public class GameBoard {
         if (moving.getName().equals("P") && (end <= 7 || end >= 56)) {  // promotion
             Piece captured = getPiece(end);
             removePiece(end);
-            addPiece(new Queen(moving.getSide(), end));
+            addPiece(new Queen(moving.getAllegiance(), end));
             throw new PromotionException(captured);
             // assume that all pawns promote into queens
         } else if (moving.getName().equals("K") && !moving.isMoved()) { // castling
@@ -129,10 +129,10 @@ public class GameBoard {
                 changePos(getPiece(7), 5);
             }
         } else if (lastMove != null && lastMove.getPiece().getName().equals("P") && moving.getName().equals("P")) {
-            if (lastMove.getEnd() == end + 8 && moving.getSide().equals("W") && moving.getPosition() % 8 != end % 8) {
+            if (lastMove.getEnd() == end + 8 && moving.getAllegiance().equals("W")) {
                 // en passant for white
                 return getPiece(end + 8);
-            } else if (lastMove.getEnd() == end - 8 && moving.getPosition() % 8 != end % 8) { // en passant for black
+            } else if (lastMove.getEnd() == end - 8  && moving.getAllegiance().equals("B")) { // en passant for black
                 return getPiece(end - 8);
             }
         }
@@ -151,7 +151,7 @@ public class GameBoard {
 
     // EFFECTS: Creates a perfect copy of the piece being input and returns it, this method is mostly used for clarity
     private Piece clonePiece(Piece p) {
-        return Piece.createPiece(p.getSide(), p.getPosition(), p.isMoved(), p.getName());
+        return Piece.createPiece(p.getAllegiance(), p.getPosition(), p.isMoved(), p.getName());
     }
 
     // The next two methods will be used in public visibility only for testing
@@ -231,14 +231,14 @@ public class GameBoard {
     private boolean testNoMoves() {
         if (turn.equals("W")) {
             for (Piece p : pieces.values()) {
-                if (p.getSide().equals("W") && p.getLegalMoves(this).size() > 0) {
+                if (p.getAllegiance().equals("W") && p.getLegalMoves(this).size() > 0) {
                     return false;
                 }
             }
             return true;
         }  // no need for else here
         for (Piece p : pieces.values()) {
-            if (p.getSide().equals("B") && p.getLegalMoves(this).size() > 0) {
+            if (p.getAllegiance().equals("B") && p.getLegalMoves(this).size() > 0) {
                 return false;
             }
         }
@@ -262,7 +262,7 @@ public class GameBoard {
         for (Piece p : pieces.values()) {
             // depending on the colour of piece,
             // we check and add pieces to the array that corresponds to the colour.
-            if (p.getSide().equals("W")) {
+            if (p.getAllegiance().equals("W")) {
                 current = piecesW;
             } else {
                 current = piecesB;

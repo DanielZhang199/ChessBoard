@@ -26,8 +26,8 @@ public class RookTest {
     public void testConstructor() {
         assertEquals("R", testRookB.getName());
         assertEquals("R", testRookW.getName());
-        assertEquals("W", testRookW.getSide());
-        assertEquals("B", testRookB.getSide());
+        assertEquals("W", testRookW.getAllegiance());
+        assertEquals("B", testRookB.getAllegiance());
     }
 
 

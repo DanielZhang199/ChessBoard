@@ -26,8 +26,8 @@ public class KnightTest {
     public void testConstructor() {
         assertEquals("N", testKnightB.getName());
         assertEquals("N", testKnightW.getName());
-        assertEquals("W", testKnightW.getSide());
-        assertEquals("B", testKnightB.getSide());
+        assertEquals("W", testKnightW.getAllegiance());
+        assertEquals("B", testKnightB.getAllegiance());
     }
 
     @Test
