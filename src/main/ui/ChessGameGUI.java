@@ -1,28 +1,33 @@
 package ui;
 
 import model.GameBoard;
+import model.Move;
 import model.MoveList;
 import model.Piece;
+import persistence.JsonConverter;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.*;
 
 
 // Class handling all GUI functionality for chess game
 public class ChessGameGUI extends JFrame implements ActionListener {
     private static final int SIZE_BOARD = 550;
-    private static final int SIZE_SIDE = 80;
+    private static final int SIZE_SIDE = 120;
     private static final Color WHITE_SQUARE = new Color(217, 169, 137);
     private static final Color BLACK_SQUARE = new Color(115, 69, 23);
+    private static final String TITLE = "Chess: ";
 
     private final DefaultListModel<String> moves = new DefaultListModel<>();
     private final ArrayList<JButton> squares = new ArrayList<>();
-    private final GameBoard gameBoard = new GameBoard();
-    private final MoveList moveList = new MoveList();
+    private GameBoard gameBoard = new GameBoard();
+    private MoveList moveList = new MoveList();
     private Piece selected;
+    private boolean confirmReset;
 
     public static void main(String[] args) {
         new ChessGameGUI();
@@ -31,7 +36,7 @@ public class ChessGameGUI extends JFrame implements ActionListener {
 
     // EFFECTS: runs the chess application
     public ChessGameGUI() {
-        super("Chess: Phase 3");
+        super(TITLE + "New Game");
         setSize(SIZE_BOARD + SIZE_SIDE, SIZE_BOARD);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -48,6 +53,8 @@ public class ChessGameGUI extends JFrame implements ActionListener {
         createBoard();
         addSidePanel();
         displayPieces();
+        confirmReset = false;
+        selected = null;
     }
 
     private void displayPieces() {
@@ -109,17 +116,18 @@ public class ChessGameGUI extends JFrame implements ActionListener {
         add(board, BorderLayout.CENTER);
     }
 
-    // todo: make this actually look good
     private void addSidePanel() {
         JPanel sidePanel = new JPanel(new GridLayout(5, 1));
         sidePanel.setPreferredSize(new Dimension(SIZE_SIDE, SIZE_BOARD));
         JList<String> list = new JList<>(moves);
-        list.setPreferredSize(new Dimension(SIZE_SIDE, SIZE_BOARD / 2));
-        sidePanel.add(list);
+        list.setPreferredSize(new Dimension(80, SIZE_BOARD / 5));
+        list.setLayoutOrientation(JList.VERTICAL);
+        JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setViewportView(list);
+        sidePanel.add(scrollPane);
         for (String s : Arrays.asList("Save", "Load", "Reset", "Undo")) {
             JButton button = new JButton(s);
             button.setActionCommand(s);
-            button.setPreferredSize(new Dimension(SIZE_SIDE, SIZE_BOARD / 8));
             button.addActionListener(this);
             sidePanel.add(button);
         }
@@ -130,6 +138,7 @@ public class ChessGameGUI extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         try {
             int pos = Integer.parseInt(e.getActionCommand());
+            confirmReset = false;
             if (selected != null && selected.getLegalMoves(gameBoard).contains(pos)) {
                 makeMove(pos);
             } else if (gameBoard.getStatus() == null) {
@@ -152,11 +161,12 @@ public class ChessGameGUI extends JFrame implements ActionListener {
     private void makeMove(int pos) {
         if (gameBoard.movePiece(selected.getPosition(), pos)) {
             moveList.addMove(gameBoard.getLastMove());
+            displayPieces();
             if (gameBoard.checkStatus()) {
                 handleGameEnd();
+            } else {
+                updateMoves();
             }
-            displayPieces();
-            updateMoves();
         } else {
             System.out.println("Something went wrong trying to move!");
             // this section should never run, but is here just in case
@@ -165,23 +175,91 @@ public class ChessGameGUI extends JFrame implements ActionListener {
     }
 
     private void updateMoves() {
+        // store as local variable to reduce calls to this method
+        int size = moveList.getSize();
         if (gameBoard.getTurn().equals("B")) {
-            moves.addElement((moveList.getSize() / 2) + 1 + ". "
-                    + moveList.getNotationList().get(moveList.getSize() - 1) + "  ");
+            moves.addElement((size / 2 + 1) + ". "
+                    + moveList.getNotationList().get(size - 1) + "  ");
+            setTitle(TITLE + "Turn " + (size / 2 + 1) + ", Black to move");
         } else {
-            String s = moves.getElementAt(moves.getSize() - 1).concat(moveList.toNotation(gameBoard.getLastMove()));
-            moves.removeElementAt(moves.getSize() - 1);
+            String s = moves.getElementAt(size / 2 - 1).concat(
+                    moveList.getNotationList().get(size - 1));
+            moves.removeElementAt(size / 2 - 1);
             moves.addElement(s);
+            setTitle(TITLE + "Turn " + (size / 2 + 1) + ", White to move");
         }
     }
 
-    // todo
     private void handleGameEnd() {
-        System.out.println("Game Ended!");
+        String status = gameBoard.getStatus();
+        if (status.startsWith("W") || status.startsWith("B")) {
+            moveList.wasCheckmate();
+        }
+        updateMoves();
+        setTitle(TITLE + status);
     }
 
-    private void handleCommand(String actionCommand) {
-        System.out.println("Handle command: " + actionCommand);
+    private void handleCommand(String command) {
+        undisplayMoves();
+        selected = null;
+        if (command.equals("Save")) {
+            try {
+                JsonConverter.saveMoveList(moveList, "./data/saveFile1.json");
+            } catch (IOException e) {
+                System.out.println("Something went wrong saving the file!");
+            }
+        } else if (command.equals("Load")) {
+            handleLoad();
+        } else if (command.equals("Undo")) {
+            handleUndo();
+        } else if (command.equals("Reset") && confirmReset) {
+            moves.clear();
+            this.moveList = new MoveList();
+            this.gameBoard = new GameBoard();
+            displayPieces();
+            setTitle(TITLE + "New Game");
+        }
+        confirmReset = command.equals("Reset");
     }
 
+    private void handleUndo() {
+        if (moveList.getSize() == 0) {
+            return;
+        }
+        moveList.undo();
+        if (moveList.getSize() > 0) {
+            gameBoard.undo(moveList.getPreviousMove());
+            moves.removeElementAt(moves.getSize() - 1);
+            if (gameBoard.getTurn().equals("B")) {
+                updateMoves();
+            } else {
+                setTitle(TITLE + "Turn " + (moveList.getSize() / 2 + 1) + ", White to move");
+            }
+        } else {
+            gameBoard.undo();
+            moves.clear();
+            setTitle(TITLE + "Turn 1, White to move");
+        }
+        displayPieces();
+    }
+
+    private void handleLoad() {
+        moves.clear();
+        try {
+            MoveList temp = JsonConverter.getMoveList("./data/saveFile1.json");
+            this.moveList = new MoveList();
+            this.gameBoard = new GameBoard();
+            for (Move m : temp.getMoveList()) {
+                selected = gameBoard.getPiece(m.getStart());
+                makeMove(m.getEnd());
+            }
+        } catch (IOException e) {
+            System.out.println("Something went wrong loading from the file!");
+        } catch (NullPointerException e) {
+            System.out.println("Something went wrong making moves from the file!");
+            this.moveList = new MoveList();
+            this.gameBoard = new GameBoard();
+            displayPieces();
+        }
+    }
 }

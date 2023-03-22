@@ -59,21 +59,21 @@ public class GameBoard {
             return false;
         }
         Piece clone = clonePiece(moving);
+        toggleTurn();
         try {
             Piece captured = updateBoard(moving, end);
             if (captured != null) {
                 pieces.remove(captured.getPosition());
             }
-            lastMove = new Move(clone, start, end, isCheck(), captured);
             pieces.remove(start);
             moving.setPosition(end);
             addPiece(moving);
+            lastMove = new Move(clone, start, end, isCheck(), captured);
         } catch (PromotionException e) {
             pieces.remove(moving.getPosition());
             Piece captured = e.getCaptured();
             lastMove = new Move(clone, start, end, isCheck(), captured);
         }
-        toggleTurn();
         return true;
     }
 
