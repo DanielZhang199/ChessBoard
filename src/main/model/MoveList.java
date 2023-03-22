@@ -127,6 +127,7 @@ public class MoveList implements Savable {
         return moves.get(moves.size() - 1);
     }
 
+    // EFFECTS: returns the move list in json format
     @Override
     public JSONObject toJson() {
         JSONObject result = new JSONObject();
@@ -135,6 +136,7 @@ public class MoveList implements Savable {
         return result;
     }
 
+    // EFFECTS: converts this.moves to a json array and returns it.
     private JSONArray movesToJson() {
         JSONArray result = new JSONArray();
         for (Move m : moves) {

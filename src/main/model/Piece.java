@@ -177,6 +177,7 @@ public abstract class Piece implements Savable {
         return result;
     }
 
+    // EFFECTS: converts the data stored in the piece to a json format
     @Override
     public JSONObject toJson() {
         JSONObject result = new JSONObject();

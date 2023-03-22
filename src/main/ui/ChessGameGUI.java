@@ -29,11 +29,6 @@ public class ChessGameGUI extends JFrame implements ActionListener {
     private Piece selected;
     private boolean confirmReset;
 
-    public static void main(String[] args) {
-        new ChessGameGUI();
-        //Create a split pane with the two scroll panes in it.
-    }
-
     // EFFECTS: runs the chess application
     public ChessGameGUI() {
         super(TITLE + "New Game");
@@ -47,8 +42,10 @@ public class ChessGameGUI extends JFrame implements ActionListener {
 
     }
 
+    // REQUIRES: can only be called once
     // MODIFIES: this
-    // EFFECTS: sets up all elements of window, and GameBoard and MoveList classes
+    // EFFECTS: sets up all elements of window, and GameBoard and MoveList classes,
+    // initializes fields to starting values
     private void init() {
         createBoard();
         addSidePanel();
@@ -57,6 +54,8 @@ public class ChessGameGUI extends JFrame implements ActionListener {
         selected = null;
     }
 
+    // MODIFIES: this
+    // EFFECTS: Displays all pieces at their locations on the board, removing any move dots
     private void displayPieces() {
         for (int i = 0; i < 64; i++) {
             if (this.gameBoard.existsPiece(i)) {
@@ -68,6 +67,10 @@ public class ChessGameGUI extends JFrame implements ActionListener {
         }
     }
 
+    // REQUIRES: selected != null (message will be printed to console instead of crashing)
+    // MODIFIES: this
+    // EFFECTS: Displays dots on squares that the selected piece can move to, replaces pieces with the dot if they can
+    // be captured. This may be changed later on to have a dot overlay the piece for clarity
     private void displayMoves() {
         if (selected == null) {
             System.out.println("Something went wrong as no piece is selected!");
@@ -79,6 +82,10 @@ public class ChessGameGUI extends JFrame implements ActionListener {
         }
     }
 
+    // REQUIRES: selected != null
+    // (assign selected = null after calling this method; it's my private method, so I can do what I want)
+    // MODIFIES: this
+    // EFFECTS: Undoes the effects of displayMoves()
     private void undisplayMoves() {
         if (selected == null) {
             return;
@@ -93,6 +100,9 @@ public class ChessGameGUI extends JFrame implements ActionListener {
         }
     }
 
+    // REQUIRES: this method can only be called once
+    // MODIFIES: this
+    // EFFECTS: adds an interactive chess board JPanel to this
     private void createBoard() {
         JPanel board = new JPanel(new GridLayout(8, 8));
         Insets buttonMargin = new Insets(0,0,0, 0);
@@ -116,6 +126,9 @@ public class ChessGameGUI extends JFrame implements ActionListener {
         add(board, BorderLayout.CENTER);
     }
 
+    // REQUIRES: this method can only be called once
+    // MODIFIES: this
+    // EFFECTS: adds a side panel using JPanel to this
     private void addSidePanel() {
         JPanel sidePanel = new JPanel(new GridLayout(5, 1));
         sidePanel.setPreferredSize(new Dimension(SIZE_SIDE, SIZE_BOARD));
@@ -134,6 +147,18 @@ public class ChessGameGUI extends JFrame implements ActionListener {
         add(sidePanel, BorderLayout.LINE_END);
     }
 
+    // REQUIRES: ActionEvent is one of the action commands that were set in initialization
+    // either [0, 63] or one of "Save", "Load", "Reset", and "Undo"
+    // MODIFIES: this
+    // EFFECTS:
+    // IF the user clicked on a chess square:
+    //  IF no piece is selected, and the square has a piece of the same colour as whoever is moving,
+    //      select that piece and display its moves
+    //  OTHERWISE, IF no piece is selected, do nothing.
+    //  OTHERWISE, IF there is a piece selected, and they can move to that square, move the piece to that square
+    //  OTHERWISE, the selected piece cannot move to the square, so deselect the current piece
+    // IF the user clicked on the button, perform the appropriate action for that button, either save to file, load from
+    // file, undo move, or reset board (reset only after it is clicked twice with not other calls to this method)
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
@@ -158,6 +183,9 @@ public class ChessGameGUI extends JFrame implements ActionListener {
         }
     }
 
+    // REQUIRES: selected != null, and 0 <= pos < 64
+    // MODIFIES: this
+    // EFFECTS: makes a move and updates the graphic interface
     private void makeMove(int pos) {
         if (gameBoard.movePiece(selected.getPosition(), pos)) {
             moveList.addMove(gameBoard.getLastMove());
@@ -174,6 +202,8 @@ public class ChessGameGUI extends JFrame implements ActionListener {
         selected = null;
     }
 
+    // MODIFIES: this
+    // EFFECTS: updates the graphic interface
     private void updateMoves() {
         // store as local variable to reduce calls to this method
         int size = moveList.getSize();
@@ -190,6 +220,9 @@ public class ChessGameGUI extends JFrame implements ActionListener {
         }
     }
 
+    // REQUIRES: gameBoard.checkStatus() is true
+    // MODIFIES: this
+    // EFFECTS: changes window to display result of the game
     private void handleGameEnd() {
         String status = gameBoard.getStatus();
         if (status.startsWith("W") || status.startsWith("B")) {
@@ -199,6 +232,10 @@ public class ChessGameGUI extends JFrame implements ActionListener {
         setTitle(TITLE + status);
     }
 
+    // REQUIRES: command is one of "Save", "Load", "Undo", or "Reset"
+    // MODIFIES: this
+    // EFFECTS: either saves the game, loads from the save, undos the last move, or resets the board when confirmReset
+    // is true, otherwise sets confirmReset to true.
     private void handleCommand(String command) {
         undisplayMoves();
         selected = null;
@@ -222,6 +259,8 @@ public class ChessGameGUI extends JFrame implements ActionListener {
         confirmReset = command.equals("Reset");
     }
 
+    // MODIFIES: this
+    // EFFECTS: undoes the last move made
     private void handleUndo() {
         if (moveList.getSize() == 0) {
             return;
@@ -243,6 +282,8 @@ public class ChessGameGUI extends JFrame implements ActionListener {
         displayPieces();
     }
 
+    // MODIFIES: this
+    // EFFECTS: loads a game from saved file, overwriting the current game
     private void handleLoad() {
         moves.clear();
         try {

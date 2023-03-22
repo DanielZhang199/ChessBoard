@@ -77,7 +77,11 @@ public class GameBoard {
         return true;
     }
 
-    public void changePos(Piece p, int end) {
+    // REQUIRES: p is in this.pieces, 0 <= end <= 63
+    // MODIFIES: this, p
+    // EFFECTS: changes position of the piece and also the key of the piece in the board.
+    // call this method when trying to move pieces around in tests
+    protected void changePos(Piece p, int end) {
         pieces.remove(p.getPosition());
         p.setPosition(end);
         pieces.put(end, p);
@@ -228,6 +232,7 @@ public class GameBoard {
         return false;
     }
 
+    // EFFECTS: returns true when the moving side has no possible moves to make
     private boolean testNoMoves() {
         if (turn.equals("W")) {
             for (Piece p : pieces.values()) {

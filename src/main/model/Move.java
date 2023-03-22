@@ -50,6 +50,7 @@ public class Move implements Savable {
         return check;
     }
 
+    // EFFECTS: converts the move to json format and returns it
     @Override
     public JSONObject toJson() {
         JSONObject result = new JSONObject();

@@ -38,6 +38,8 @@ public final class JsonConverter {
         return result;
     }
 
+    // EFFECTS: gets the list of algebraic notation from json file, which explains the game state without requiring
+    // to load the entire game.
     public static ArrayList<String> getNotationList(String file) throws IOException {
         StringBuilder builder = new StringBuilder();
         try (Stream<String> stream = Files.lines(Paths.get(file), StandardCharsets.UTF_8)) {
