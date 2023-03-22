@@ -149,10 +149,15 @@ public abstract class Piece implements Savable {
     protected Set<Integer> getMovesDiagonal(GameBoard b) {
         Set<Integer> result;
         // iterate through each diagonal (basically up/down and left/right one square each)
-        result = new HashSet<>(scanDown(this.position, 9, 0, b, true));
-        result.addAll(scanDown(this.position, 7, 0, b, true));
-        result.addAll(scanUp(this.position, 9, 63, b, true));
-        result.addAll(scanUp(this.position, 7, 63, b, true));
+        result = new HashSet<>();
+        if (position % 8 != 0) {
+            result.addAll(scanDown(this.position, 9, 0, b, true));
+            result.addAll(scanUp(this.position, 7, 63, b, true));
+        }
+        if (position % 8 != 7) {
+            result.addAll(scanUp(this.position, 9, 63, b, true));
+            result.addAll(scanDown(this.position, 7, 0, b, true));
+        }
         return result;
     }
 
@@ -160,8 +165,13 @@ public abstract class Piece implements Savable {
     protected Set<Integer> getMovesOrthogonal(GameBoard b) {
         Set<Integer> result;
         // iterate through each row/column
-        result = new HashSet<>(scanDown(this.position, 1, this.position - this.position % 8, b, false));
-        result.addAll(scanUp(this.position, 1, this.position + 7 - this.position % 8, b, false));
+        result = new HashSet<>();
+        if (position % 8 != 0) {
+            result.addAll(scanDown(this.position, 1, this.position - this.position % 8, b, false));
+        }
+        if (position % 8 != 7) {
+            result.addAll(scanUp(this.position, 1, this.position + 7 - this.position % 8, b, false));
+        }
         result.addAll(scanDown(this.position, 8, 0, b, false));
         result.addAll(scanUp(this.position, 8, 63, b, false));
         return result;

@@ -1,5 +1,7 @@
 package model;
 
+import model.exceptions.PromotionException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -53,24 +55,23 @@ public class GameBoard {
     // ELSE, method returns false.
     public boolean movePiece(int start, int end) {
         Piece moving = getPiece(start);
-        if (moving == null) {
-            return false;
-        }
-        if (!moving.getLegalMoves(this).contains(end)) {
+        if (moving == null || !moving.getLegalMoves(this).contains(end)) {
             return false;
         }
         Piece clone = clonePiece(moving);
-        Piece captured = updateBoard(moving, end);
-        if (captured != null) {
-            pieces.remove(captured.getPosition());
+        try {
+            Piece captured = updateBoard(moving, end);
+            if (captured != null) {
+                pieces.remove(captured.getPosition());
+            }
             lastMove = new Move(clone, start, end, isCheck(), captured);
-        } else {
-            lastMove = new Move(clone, start, end, isCheck());
-        }
-        if (!existsPiece(end)) {
-            moving.setPosition(end);
             pieces.remove(start);
+            moving.setPosition(end);
             addPiece(moving);
+        } catch (PromotionException e) {
+            pieces.remove(moving.getPosition());
+            Piece captured = e.getCaptured();
+            lastMove = new Move(clone, start, end, isCheck(), captured);
         }
         toggleTurn();
         return true;
@@ -108,15 +109,14 @@ public class GameBoard {
     // EFFECTS: updates board in special cases and returns piece being captured if applicable. Basically moves pieces
     // in cases outside normal movement or captures. The piece being captured needs to be found in this method due to
     // en passant tests being here.
-    private Piece updateBoard(Piece moving, int end) {
+    private Piece updateBoard(Piece moving, int end) throws PromotionException {
         // whether special moves are legal is determined by the piece class, this method only updates the board
         if (moving.getName().equals("P") && (end <= 7 || end >= 56)) {  // promotion
-            pieces.remove(moving.getPosition());
             Piece captured = getPiece(end);
+            removePiece(end);
             addPiece(new Queen(moving.getAllegiance(), end));
-            return captured;
+            throw new PromotionException(captured);
             // assume that all pawns promote into queens
-
         } else if (moving.getName().equals("K") && !moving.isMoved()) { // castling
             if (end == 62) {
                 // we trust that there is already a rook on 63, since otherwise this would not be legal end move
@@ -128,11 +128,11 @@ public class GameBoard {
             } else if (end == 6) {
                 changePos(getPiece(7), 5);
             }
-
         } else if (lastMove != null && lastMove.getPiece().getName().equals("P") && moving.getName().equals("P")) {
-            if (lastMove.getEnd() == end + 8 && moving.getAllegiance().equals("W")) { // en passant for white
+            if (lastMove.getEnd() == end + 8 && moving.getAllegiance().equals("W") && moving.getPosition() % 8 != end % 8) {
+                // en passant for white
                 return getPiece(end + 8);
-            } else if (lastMove.getEnd() == end - 8) { // en passant for black
+            } else if (lastMove.getEnd() == end - 8 && moving.getPosition() % 8 != end % 8) { // en passant for black
                 return getPiece(end - 8);
             }
         }
@@ -177,9 +177,13 @@ public class GameBoard {
     public boolean testCheck(int start, int end) {
         HashMap<Integer, Piece> original = tempBoard();
         Piece moving = getPiece(start);
-        Piece captured = updateBoard(moving, end);
-        if (captured != null) {
-            pieces.remove(captured.getPosition());
+        try {
+            Piece captured = updateBoard(moving, end);
+            if (captured != null) {
+                pieces.remove(captured.getPosition());
+            }
+        } catch (PromotionException e) {
+            pieces.remove(moving.getPosition());
         }
         changePos(moving, end);
         boolean val = isCheck();
