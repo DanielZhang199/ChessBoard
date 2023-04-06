@@ -1,21 +1,22 @@
 package ui;
 
-import model.GameBoard;
-import model.Move;
-import model.MoveList;
-import model.Piece;
+import model.*;
+import model.Event;
 import persistence.JsonConverter;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.*;
 
 
 // Class handling all GUI functionality for chess game
-public class ChessGameGUI extends JFrame implements ActionListener {
+public class ChessGameGUI extends JFrame implements ActionListener, WindowListener {
     private static final int SIZE_BOARD = 550;
     private static final int SIZE_SIDE = 120;
     private static final Color WHITE_SQUARE = new Color(217, 169, 137);
@@ -39,6 +40,7 @@ public class ChessGameGUI extends JFrame implements ActionListener {
         setLocationRelativeTo(null);
         init();
         setVisible(true);
+        addWindowListener(this);
 
     }
 
@@ -234,7 +236,7 @@ public class ChessGameGUI extends JFrame implements ActionListener {
 
     // REQUIRES: command is one of "Save", "Load", "Undo", or "Reset"
     // MODIFIES: this
-    // EFFECTS: either saves the game, loads from the save, undos the last move, or resets the board when confirmReset
+    // EFFECTS: either saves the game, loads from the save, undoes the last move, or resets the board when confirmReset
     // is true, otherwise sets confirmReset to true.
     private void handleCommand(String command) {
         undisplayMoves();
@@ -302,5 +304,41 @@ public class ChessGameGUI extends JFrame implements ActionListener {
             this.gameBoard = new GameBoard();
             displayPieces();
         }
+    }
+
+    @Override
+    public void windowOpened(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowClosing(WindowEvent e) {
+        for (Event event : EventLog.getInstance()) {
+            System.out.println(event.toString());
+        }
+    }
+
+    @Override
+    public void windowClosed(WindowEvent e) {
+    }
+
+    @Override
+    public void windowIconified(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowDeiconified(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowActivated(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowDeactivated(WindowEvent e) {
+
     }
 }

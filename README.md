@@ -1,5 +1,11 @@
 # Personal Project: Working Chess Board
 
+### TODO:
+1. Fix undo castling bug
+2. Fix undo after game end bug (UI only)
+3. Refactor toNotation to be a method of Move objects, rather than MoveList static method.
+4. Update comments on logging functions.
+
 ## Proposed Functionality
 
 - Display a representation of a chess board (obviously).
@@ -46,7 +52,53 @@ right of the window.
 The chess board does not go away while the program is running.
 - You can save the state of my application by clicking the button labelled "Save".
 - You can reload the state of my application by clicking the button labelled "Load".
-> (ABOVE: Most condescending chess tutorial of all time.)
+> (Most condescending chess tutorial of all time.)
+
+## Phase 4: Task 2
+```
+Wed Apr 05 22:57:30 PDT 2023
+Created new board
+Wed Apr 05 22:57:32 PDT 2023
+Made move: e4
+Wed Apr 05 22:57:33 PDT 2023
+Made move: e5
+Wed Apr 05 22:57:34 PDT 2023
+Made move: Nf3
+Wed Apr 05 22:57:35 PDT 2023
+Undo last move of Nf3
+Wed Apr 05 22:57:36 PDT 2023
+Made move: Qh5
+Wed Apr 05 22:57:38 PDT 2023
+Made move: Nc6
+Wed Apr 05 22:57:40 PDT 2023
+Made move: Bc4
+Wed Apr 05 22:57:41 PDT 2023
+Made move: Nf6
+Wed Apr 05 22:57:42 PDT 2023
+Made move: Qxf7+
+Wed Apr 05 22:57:42 PDT 2023
+Game Over: White Wins By Checkmate
+Wed Apr 05 22:57:43 PDT 2023
+Undo last move of Qxf7+
+Wed Apr 05 22:57:45 PDT 2023
+Created new board
+Wed Apr 05 22:57:47 PDT 2023
+Made move: e4
+Wed Apr 05 22:57:48 PDT 2023
+Made move: e6
+Wed Apr 05 22:57:50 PDT 2023
+Made move: d4
+Wed Apr 05 22:57:52 PDT 2023
+Made move: d5
+Wed Apr 05 22:57:52 PDT 2023
+Made move: e5
+Wed Apr 05 22:57:56 PDT 2023
+Made move: f5
+Wed Apr 05 22:57:56 PDT 2023
+Made move: exf6
+Wed Apr 05 22:58:00 PDT 2023
+Created new board
+```
 
 ## Board Grid
 ![8x8 grid from 0-63](grid.png "Putting this here for future reference")

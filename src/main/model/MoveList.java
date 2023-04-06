@@ -51,7 +51,7 @@ public class MoveList implements Savable {
     // - algorithm isn't perfect: it does not specify which piece moved if multiple pieces of the same name can move
     // to the same square; this is simply not possible to do without knowing what the board is like.
     // - this cannot be reversed without knowledge of the board state, which we don't have.
-    private static String toNotation(Move move) {
+    public static String toNotation(Move move) {
         if (move.getPiece().getName().equals("K")) {
             if ((move.getStart() == 60 && move.getEnd() == 62) || (move.getStart() == 4 && move.getEnd() == 6)) {
                 return "O-O";

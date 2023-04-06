@@ -12,6 +12,7 @@ public class GameBoard {
     private String turn; // the side that gets to move next turn; either "W" or "B"
     private String status;  // end result of game, null if not applicable
     private Move lastMove;  // the most recent move of the game; useful for displays and for en passant
+    private final EventLog log = EventLog.getInstance();
 
     // MODIFIES: this
     // EFFECTS: creates a board with pieces on starting positions, with white to move, and no moves played yet.
@@ -74,6 +75,7 @@ public class GameBoard {
             Piece captured = e.getCaptured();
             lastMove = new Move(clone, start, end, isCheck(), captured);
         }
+        log.logEvent(new Event("Made move: " + MoveList.toNotation(lastMove)));
         return true;
     }
 
@@ -216,16 +218,20 @@ public class GameBoard {
     public boolean checkStatus() {
         if (testInsufficientMaterial()) {
             status = "Draw By Insufficient Material";
+            log.logEvent(new Event("Game Over: " + status));
             return true;
         } else if (testNoMoves()) {
             if (isCheck()) {
                 if (turn.equals("W")) {
                     status = "Black Wins By Checkmate";
+                    log.logEvent(new Event("Game Over: " + status));
                 } else {
                     status = "White Wins By Checkmate";
+                    log.logEvent(new Event("Game Over: " + status));
                 }
             } else {
                 status = "Stalemate";
+                log.logEvent(new Event("Game Over: " + status));
             }
             return true;
         }
@@ -343,6 +349,7 @@ public class GameBoard {
     private void addKings() {
         addPiece(new King("W", 60));
         addPiece(new King("B", 4));
+        log.logEvent(new Event("Created new board"));
     }
 
     public Move getLastMove() {
@@ -356,6 +363,7 @@ public class GameBoard {
     // move was made.
     public void undo(Move newPreviousMove) {
         if (lastMove != null) {
+            log.logEvent(new Event("Undoing last move of " + MoveList.toNotation(lastMove)));
             Piece p = lastMove.getPiece();
             removePiece(lastMove.getEnd());
             addPiece(p);
@@ -373,6 +381,7 @@ public class GameBoard {
     public void undo() {
         // call this version if we don't know what last move was, or there was no prior move (i.e. first move)
         if (lastMove != null) {
+            log.logEvent(new Event("Undoing last move of " + MoveList.toNotation(lastMove)));
             Piece p = lastMove.getPiece();
             removePiece(lastMove.getEnd());
             addPiece(p);
