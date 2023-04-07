@@ -36,12 +36,12 @@ challenges to not feel too trivial.
 4. As a user, I want to be able to see previous moves, preferably both graphically and through chess notation. 
 *(This requires adding an X to a Y)*
 5. As a user, I want the game to automatically detect checkmate or stalemate positions.
-#### Phase 2 Stories:
+## Phase 2 Stories
 6. As a user, I want the choice to save the board at any time.
 7. As a user, I want to be given the option to load the previously saved board from a file.
 8. As a user, I want there to be multiple possible save slots.
 
-## Instructions for Grader (Phase 3)
+## Phase 3: Instructions for Grader 
 - You can generate the first required action related to adding Xs to a Y by running Main.main() and clicking on a white 
 pawn or knight. These are the icons on the second row from the bottom of the checkerboard, 
 and also the 2 squares from each edge on the bottom most row.
@@ -54,7 +54,7 @@ The chess board does not go away while the program is running.
 - You can reload the state of my application by clicking the button labelled "Load".
 > (Most condescending chess tutorial of all time.)
 
-## Phase 4: Task 2
+## Phase 4: Task 2 (Example console log)
 ```
 Wed Apr 05 22:57:30 PDT 2023
 Created new board
@@ -100,5 +100,23 @@ Wed Apr 05 22:58:00 PDT 2023
 Created new board
 ```
 
-## Board Grid
-![8x8 grid from 0-63](grid.png "Putting this here for future reference")
+## Phase 4: Task 3 (Reflection)
+![UML Diagram](UML_Design_Diagram.png)
+From the diagram above, it initially looks like my code is structured and somewhat organized. 
+However, there is quite a bit of coupling between classes, and certain functions in classes that can be further subdivided.
+Most notably, the Piece class and GameBoard class are *very* strongly coupled together. Moving a piece also requires updating the position of the piece on the board;
+pieces stored in GameBoard are organized by their position in a HashMap. Finding the moves of a piece also requires the knowledge of every other piece.
+Knowing this, it would be better to separate the GameBoard class into 2 classes, one that handles the game of Chess, and one that handles 
+the location of every piece on the board. This second class could be a field of each piece, so functions in the Piece class would not rely on the entirety of GameBoard and would work more independently.
+
+Of course, the prior proposal would require the rewriting of nearly all model package, and would be highly impractical.
+A more likely and useful refactoring would be the separation of the GUI with the actual chess game. This would allow me to keep both 
+the command line interface (which was recently deleted) along with the current graphic interface, and would make it substantially easier to work on UI improvements.
+
+The last refactoring proposal I can think of would be to change how the data is saved and loaded. Right now, data can be saved
+by saving the entirety of MoveList, which requires saving every Move and thus every Piece that made the move. 
+This is technically unnecessary, as the only data that is needed to make moves from the starting position of the board to the saved position
+are starting and ending squares. This is because it can be assumed that all moves made are legal, and the data of which piece made which move is only
+relevant when undoing moves. 
+## Board Coordinate System
+![8x8 grid from 0-63](grid.png)
