@@ -2,9 +2,7 @@
 
 ### TODO:
 1. Fix undo castling bug
-2. Fix undo after game end bug (UI only)
-3. Refactor toNotation to be a method of Move objects, rather than MoveList static method.
-4. Update comments on logging functions.
+2. Refactor toNotation to be a method of Move objects, rather than MoveList static method.
 
 ## Proposed Functionality
 

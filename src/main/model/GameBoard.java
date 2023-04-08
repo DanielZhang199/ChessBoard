@@ -52,7 +52,7 @@ public class GameBoard {
     // MODIFIES: this, piece
     // EFFECTS: IF the move is possible (as dictated by piece on starting square) the turn goes the other player, and
     // piece moves from start to end square; if there is an enemy piece on the ending square, that piece is removed from
-    // the board. updates lastMove. method returns true
+    // the board. updates lastMove. method returns true and logs the move to the event log.
     // ELSE, method returns false.
     public boolean movePiece(int start, int end) {
         Piece moving = getPiece(start);
@@ -214,7 +214,7 @@ public class GameBoard {
     // EFFECTS: Checks if the board is in a position that is a checkmate or drawn. Sets status field as follows:
     // possible end conditions are "Checkmate", "Stalemate, "Draw By Insufficient Material".
     // The checks for 3 move repetition and 50 move rule will be done in MoveList class instead.
-    // Returns true if game is over, false otherwise.
+    // Returns true if game is over, and the reason for ending is logged to event log; method returns false otherwise.
     public boolean checkStatus() {
         if (testInsufficientMaterial()) {
             status = "Draw By Insufficient Material";
@@ -345,7 +345,7 @@ public class GameBoard {
 
     // REQUIRES: kings are not already on board
     // MODIFIES: this
-    // EFFECTS: add kings to the board
+    // EFFECTS: add kings to the board, adds to event log that a new board was created
     private void addKings() {
         addPiece(new King("W", 60));
         addPiece(new King("B", 4));
@@ -363,15 +363,7 @@ public class GameBoard {
     // move was made.
     public void undo(Move newPreviousMove) {
         if (lastMove != null) {
-            log.logEvent(new Event("Undoing last move of " + MoveList.toNotation(lastMove)));
-            Piece p = lastMove.getPiece();
-            removePiece(lastMove.getEnd());
-            addPiece(p);
-            if (lastMove.getCaptured() != null) {
-                addPiece(lastMove.getCaptured());
-            }
-            toggleTurn();
-            lastMove = newPreviousMove;
+            preformUndo(newPreviousMove);
         }
     }
 
@@ -381,15 +373,23 @@ public class GameBoard {
     public void undo() {
         // call this version if we don't know what last move was, or there was no prior move (i.e. first move)
         if (lastMove != null) {
-            log.logEvent(new Event("Undoing last move of " + MoveList.toNotation(lastMove)));
-            Piece p = lastMove.getPiece();
-            removePiece(lastMove.getEnd());
-            addPiece(p);
-            if (lastMove.getCaptured() != null) {
-                addPiece(lastMove.getCaptured());
-            }
-            toggleTurn();
-            lastMove = null;
+            preformUndo(null);
         }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: implements the functionality of the previous 2 undo methods with different signatures
+    // logs to event log of the move being undone.
+    private void preformUndo(Move last) {
+        log.logEvent(new Event("Undoing last move of " + MoveList.toNotation(lastMove)));
+        Piece p = lastMove.getPiece();
+        removePiece(lastMove.getEnd());
+        addPiece(p);
+        if (lastMove.getCaptured() != null) {
+            addPiece(lastMove.getCaptured());
+        }
+        toggleTurn();
+        lastMove = last;
+        status = null;
     }
 }
