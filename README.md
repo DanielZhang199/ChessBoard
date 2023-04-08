@@ -3,6 +3,7 @@
 ### TODO:
 1. Fix undo castling bug
 2. Refactor toNotation to be a method of Move objects, rather than MoveList static method.
+3. Reimplement multiple save files (?)
 
 ## Proposed Functionality
 
@@ -97,6 +98,10 @@ Made move: exf6
 Wed Apr 05 22:58:00 PDT 2023
 Created new board
 ```
+> Loading and resetting the board is represented by ```Created new board```, as the log can only be accessed within the 
+> model package. Unfortunately there are no special methods that handle loading in the model package and thus there
+> is not more detail about what exactly is happening. Saving will not be logged since it (obviously) doesn't change the 
+> model in any way
 
 ## Phase 4: Task 3 (Reflection)
 ![UML Diagram](UML_Design_Diagram.png)
